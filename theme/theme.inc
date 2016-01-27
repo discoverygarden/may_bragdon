@@ -38,43 +38,19 @@ function template_preprocess_islandora_compound_prev_next(array &$variables) {
       
     // iterate through the first level siblings  
     for ($i = 0; $i < count($variables['siblings']); $i += 1) {
-      $sibling = array();
-      $sibling['pid'] = $variables['siblings'][$i];
-      
-      dpm("pid = " . $sibling['pid']);
-      
-      
-      
-      $sibling['class'] = array();
-      if ($sibling['pid'] === $variables['pid']) {
-        $sibling['class'][] = 'active';
-      }
-      $sibling_object = islandora_object_load($sibling['pid']);
-      if (isset($sibling_object['TN']) && 
-              islandora_datastream_access(ISLANDORA_VIEW_OBJECTS, $sibling_object['TN'])) {
-        $sibling['TN'] = 'islandora/object/' . $sibling['pid'] . '/datastream/TN/view';
-      }
-      else {
-        // Object either does not have a thumbnail or it's restricted show a
-        // default in its place.
-        $sibling['TN'] = $folder_image_path;
-      }
-      $sibling['label'] = $sibling_object->label;
-      //$themed_siblings[] = $sibling;
-      
       // see if this has other children
-      $themed_siblings = array_merge($themed_siblings, theme_rochdora_get_children($sibling['pid']));
-      
-      
+      $themed_siblings = array_merge($themed_siblings, 
+              theme_rochdora_get_children($variables['siblings'][$i]));
     }
   }
   
   $variables['themed_siblings'] = $themed_siblings;
-  //dpm($variables);  
+ 
 }
 
 function theme_rochdora_get_children($pid){
-    dpm("getting pid " . $pid);
+    $image_path = drupal_get_path('module', 'islandora');
+    $folder_image_path = "$image_path/images/folder.png";
     
     //hold the themed children information
     $themed_children = [];
@@ -86,8 +62,6 @@ function theme_rochdora_get_children($pid){
         
         //load the child object
         $child_object = islandora_object_load($child_pid);
-        dpm("child object");
-        dpm($child_object);
         
         $sibling_object = islandora_object_load($child_pid);
         
@@ -98,8 +72,12 @@ function theme_rochdora_get_children($pid){
         if(isset($sibling_object['TN']) && 
            islandora_datastream_access(ISLANDORA_VIEW_OBJECTS, $sibling_object['TN'])){
                $child_info['TN'] = 'islandora/object/' . $child_pid . '/datastream/TN/view';
+        } else {
+            // Object either does not have a thumbnail or it's restricted show a
+            // default in its place.
+            $child_info['TN'] = $folder_image_path;
         }
-        dpm($sibling_object);
+       
         $child_info['label'] = $sibling_object->label;
            
         $themed_children[] = $child_info;
