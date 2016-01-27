@@ -1,0 +1,6 @@
+name = May Bragdon
+description = "Customizations for May Bragdon Project"
+package = Rochester
+dependencies[] = rochdora
+version = 7.x-dev
+core = 7.x

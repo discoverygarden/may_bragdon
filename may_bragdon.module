@@ -1,0 +1,117 @@
+<?php
+
+/**
+ * Constructs the default navigation block for a compound.
+ *
+ * @param AbstractObject $object
+ *   If supplied the object to create the block for.
+ *
+ * @return array
+ *   Renderable array for the block.
+ */
+function may_bragdon_compound_object_navigation_block(AbstractObject $object = NULL) {
+  module_load_include('inc', 'islandora', 'includes/utilities');
+  drupal_add_css(drupal_get_path('module', 'islandora_compound_object') . '/css/islandora_compound_object.block.css');
+  $object = $object ? $object : menu_get_object('islandora_object', 2);
+  if ($object) {
+    // If only compound cmodel objects can be compound, this isn't necessary.
+    dpm("object get parts " . $object->id);
+    
+    $children = islandora_compound_object_get_parts($object->id);
+    dpm("children");
+    dpm($children);
+    $pid = (!empty($children)) ? $children[0] : $object->id;
+    dpm("pid");
+    dpm($pid);
+    $object = islandora_object_load($pid);
+    $output = '';
+    if ($object) {
+      $compound_info = islandora_compound_object_retrieve_compound_info($object);
+      //dpm("compound info");
+      //dpm($compound_info);
+      // This object is part of a compound object.
+      if (!empty($compound_info)) {
+        $siblings = $compound_info['siblings'];
+        foreach ($compound_info['siblings'] as $sibling) {
+             //dpm("sibling 2:" . $sibling);
+             // get the children for the sibling
+             $children = islandora_compound_object_get_parts($sibling);
+             //dpm($children);
+             foreach($children as $child){
+                 /*
+                 $object = islandora_object_load($child);
+                 dpm("long ways down");
+                 dpm($object);
+                 dpm("more compund info");
+                 $compound_info = islandora_compound_object_retrieve_compound_info($object);
+                 dpm($compound_info);*/
+             }
+             $sibling_object = islandora_object_load($sibling);
+             
+             /*
+             dpm($sibling_object);
+             $sibling_info = islandora_compound_object_retrieve_compound_info($sibling_object);
+             dpm("sibling info");
+             dpm($sibling_info);*/
+        }
+        
+        dpm("compound info");
+        dpm($compound_info); 
+          
+        $prev_next = theme('islandora_compound_prev_next', $compound_info);
+        $output .= $prev_next;
+      }
+
+      if (!empty($output)) {
+        return array('#markup' => $output);
+      }
+    }
+  }
+}
+
+/**
+ * modify the theme registry to use the rochester template
+ */
+function may_bragdon_theme_registry_alter(&$theme_registry) {
+  dpm("what is going on?");   
+  
+  //watchdog("rochdora", "theme registry alter");
+  //template_preprocess_rochdora_compound_prev_next("blah");
+  if (isset($theme_registry['islandora_compound_prev_next'])) {
+    $module_path = drupal_get_path('module', 'may_bragdon');
+    $theme_registry['islandora_compound_prev_next']['theme path'] = $module_path . '/theme';
+    $theme_registry['islandora_compound_prev_next']['template'] = $module_path . '/theme/may-bragdon-compound-prev-next';
+    $theme_registry['islandora_compound_prev_next']['includes'][0] = $module_path . '/theme/theme.inc';
+  }
+  dpm($theme_registry);
+}
+
+/**
+ * Implements hook_block_info().
+ *
+ * Prints a compound block on books.
+ */
+function may_bragdon_block_view_islandora_compound_object_compound_navigation_alter(&$data, $block) {
+    $object = menu_get_object('islandora_object', 2);
+  if ($object && !$data['content'] && in_array('islandora:bookCModel', $object->models)) {
+       dpm($object->models);
+    module_load_include('inc', 'islandora_compound_object', 'includes/blocks');
+    module_load_include('inc', 'islandora_paged_content', 'includes/utilities');
+    $page = isset($_GET['islandora_paged_content_page']) ? $_GET['islandora_paged_content_page'] : 1;
+    $pages = islandora_paged_content_get_pages($object);
+    foreach ($pages as $page_array) {
+      if ($page_array['page'] == $page) {
+        $page_object = islandora_object_load($page_array['pid']);
+        break;
+      }
+    }
+    $data['content'] = may_bragdon_compound_object_navigation_block($page_object);
+    // Using a hidden value to populate the sidebar.
+    if (!$data['content']) {
+      $data['content'] = array(
+        '#type' => 'hidden',
+      );
+    }
+    drupal_add_js(drupal_get_path('module', 'rochdora') . '/js/book_page_compound_block.js');
+  }
+}
