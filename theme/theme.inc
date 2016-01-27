@@ -33,14 +33,16 @@ function template_preprocess_islandora_compound_prev_next(array &$variables) {
   // If the parent TN is not set, only show children if there's more than one.
   // If the parent TN is set, show all children even if there's only one.
 
-  if (($variables['child_count'] > 1 && !$variables['parent_tn']) || ($variables['child_count'] > 0 && $variables['parent_tn'])) {
+  if (($variables['child_count'] > 1 && !$variables['parent_tn']) || 
+          ($variables['child_count'] > 0 && $variables['parent_tn'])) {
+      
+    // iterate through the first level siblings  
     for ($i = 0; $i < count($variables['siblings']); $i += 1) {
       $sibling = array();
       $sibling['pid'] = $variables['siblings'][$i];
       
       dpm("pid = " . $sibling['pid']);
-      // see if this has other children
-      theme_rochdora_get_siblings($sibling['pid']);
+      
       
       
       $sibling['class'] = array();
@@ -48,7 +50,8 @@ function template_preprocess_islandora_compound_prev_next(array &$variables) {
         $sibling['class'][] = 'active';
       }
       $sibling_object = islandora_object_load($sibling['pid']);
-      if (isset($sibling_object['TN']) && islandora_datastream_access(ISLANDORA_VIEW_OBJECTS, $sibling_object['TN'])) {
+      if (isset($sibling_object['TN']) && 
+              islandora_datastream_access(ISLANDORA_VIEW_OBJECTS, $sibling_object['TN'])) {
         $sibling['TN'] = 'islandora/object/' . $sibling['pid'] . '/datastream/TN/view';
       }
       else {
@@ -57,29 +60,51 @@ function template_preprocess_islandora_compound_prev_next(array &$variables) {
         $sibling['TN'] = $folder_image_path;
       }
       $sibling['label'] = $sibling_object->label;
-      $themed_siblings[] = $sibling;
+      //$themed_siblings[] = $sibling;
+      
+      // see if this has other children
+      $themed_siblings = array_merge($themed_siblings, theme_rochdora_get_children($sibling['pid']));
+      
+      
     }
   }
+  
   $variables['themed_siblings'] = $themed_siblings;
   //dpm($variables);  
 }
 
-function theme_rochdora_get_siblings($pid){
+function theme_rochdora_get_children($pid){
     dpm("getting pid " . $pid);
-    $object = islandora_object_load($pid);
-    $compound_info = islandora_compound_object_retrieve_compound_info($object);
     
-    $siblings = $compound_info['siblings'];
-    foreach ($compound_info['siblings'] as $sibling) {
-       $children = islandora_compound_object_get_parts($sibling);
-       //dpm($children);
-       foreach($children as $child){
-           $child_object = islandora_object_load($child);
-           dpm("grandchild compund info");
-           $compound_child_info = islandora_compound_object_retrieve_compound_info($child_object);
-           dpm($compound_child_info);
-        }     
-    }
+    //hold the themed children information
+    $themed_children = [];
+    
+    // load the child pids for the given pid
+    $children_pids = islandora_compound_object_get_parts($pid);
+    
+    foreach($children_pids as $child_pid){
+        
+        //load the child object
+        $child_object = islandora_object_load($child_pid);
+        dpm("child object");
+        dpm($child_object);
+        
+        $sibling_object = islandora_object_load($child_pid);
+        
+        $child_info = array();
+        $child_info['class'][] = 'active';
+        $child_info['pid'] = $child_pid;
+
+        if(isset($sibling_object['TN']) && 
+           islandora_datastream_access(ISLANDORA_VIEW_OBJECTS, $sibling_object['TN'])){
+               $child_info['TN'] = 'islandora/object/' . $child_pid . '/datastream/TN/view';
+        }
+        dpm($sibling_object);
+        $child_info['label'] = $sibling_object->label;
+           
+        $themed_children[] = $child_info;
+    }     
+    return $themed_children;
     
 }
 
