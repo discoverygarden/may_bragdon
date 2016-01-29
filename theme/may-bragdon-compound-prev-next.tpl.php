@@ -28,18 +28,7 @@
             <?php if ($parent_url): ?>
                 <?php print l(t('manage parent'), $parent_url); ?>
             <?php endif; ?>
-            <?php if ($parent_tn): ?>
-                <?php
-                print l(
-                                theme_image(
-                                        array(
-                                            'path' => $parent_tn,
-                                            'attributes' => array(),
-                                        )
-                                ), 'islandora/object/' . $parent_pid, array('html' => TRUE)
-                );
-                ?>
-            <?php endif; ?>
+            
         </span><br/>
 
         <?php if (!empty($previous_pid)): ?>
@@ -55,19 +44,25 @@
     <?php if (count($themed_siblings) > 0): ?>
         <div class="islandora-compound-thumbs">
             <?php foreach ($themed_siblings as $sibling): ?>
-                <div class="islandora-compound-thumb">
-                    <?php
-                    print l(
+                <div class="bragdon-child-grouping">
+                <?php foreach($sibling as $child): ?>
+                    
+                    <div class="islandora-compound-thumb <?php print(str_replace(' ', '_', trim(strtolower($child['label'])))); ?>">
+                        <?php
+                        print l(
                                     theme_image(
                                             array(
-                                                'path' => $sibling['TN'],
-                                                'attributes' => array('class' => $sibling['class']),
+                                                'path' => $child['TN'],
+                                                'attributes' => array('class' => $child['class']),
                                             )
-                                    ), 'islandora/object/' . $sibling['pid'], array('html' => TRUE)
-                    );
-                    ?>
+                                    ), 'islandora/object/' . $child['pid'], array('html' => TRUE)
+                        );
+                        ?>
+                    </div>
+                 <?php endforeach; // each themed_siblings ?>
                 </div>
             <?php endforeach; // each themed_siblings ?>
         </div> <!-- // islandora-compound-thumbs -->
-    <?php endif; // count($themed_siblings) > 0  ?>
+    <?php endif; // count($themed_siblings) > 0  ?>   
+ 
 </div>

@@ -8,6 +8,7 @@ function template_preprocess_islandora_compound_prev_next(array &$variables) {
  drupal_add_js(drupal_get_path('module', 'islandora_compound_object') . '/js/caption_width.js');
 
   $themed_siblings = array();
+  $themed_siblings2 = array();
   $image_path = drupal_get_path('module', 'islandora');
   $folder_image_path = "$image_path/images/folder.png";
 
@@ -38,9 +39,8 @@ function template_preprocess_islandora_compound_prev_next(array &$variables) {
       
     // iterate through the first level siblings  
     for ($i = 0; $i < count($variables['siblings']); $i += 1) {
-      // see if this has other children
-      $themed_siblings = array_merge($themed_siblings, 
-              theme_rochdora_get_children($variables['siblings'][$i]));
+      $child_pid = $variables['siblings'][$i]; 
+      $themed_siblings[] = theme_rochdora_get_children($child_pid);
     }
   }
   
@@ -116,6 +116,4 @@ function theme_islandora_compound_object_draggable_table(array $variables) {
   drupal_add_tabledrag($table_id, 'order', 'sibling', $weight_class);
   return $output;  
 }
-
-
 
