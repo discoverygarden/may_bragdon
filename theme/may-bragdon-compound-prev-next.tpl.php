@@ -46,7 +46,7 @@
             <?php foreach ($themed_siblings as $sibling): ?>
                 <div class="bragdon-child-grouping">
                 <?php foreach($sibling as $child): ?>
-                    
+                    <h3><?php print $child['label']; ?></h3>
                     <div class="islandora-compound-thumb <?php print(str_replace(' ', '_', trim(strtolower($child['label'])))); ?>">
                         <?php
                         print l(
@@ -55,7 +55,7 @@
                                                 'path' => $child['TN'],
                                                 'attributes' => array('class' => $child['class']),
                                             )
-                                    ), 'islandora/object/' . $child['pid'], array('html' => TRUE)
+                                    ), 'islandora/object/' . $child['parent_pid'], array('html' => TRUE)
                         );
                         ?>
                     </div>

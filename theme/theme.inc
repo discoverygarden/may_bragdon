@@ -32,16 +32,26 @@ function template_preprocess_islandora_compound_prev_next(array &$variables) {
 
   // If the parent TN is not set, only show children if there's more than one.
   // If the parent TN is set, show all children even if there's only one.
-
+  
   if (($variables['child_count'] > 1 && !$variables['parent_tn']) || 
           ($variables['child_count'] > 0 && $variables['parent_tn'])) {
-      
+    
     // iterate through the first level siblings  
     for ($i = 0; $i < count($variables['siblings']); $i += 1) {
       $child_pid = $variables['siblings'][$i]; 
-      $themed_siblings[] = theme_rochdora_get_children($child_pid);
+      $child = theme_rochdora_get_children($child_pid);
+      if(!empty($child)){
+           $themed_siblings[] = $child;
+      }
+     
     }
   }
+  
+  //see if it's direct children have images
+  if( count($themed_siblings) == 0 ){
+    $themed_siblings[] = theme_rochdora_get_children($variables['parent_pid']);
+  }
+  
   
   $variables['themed_siblings'] = $themed_siblings;
  
@@ -67,6 +77,7 @@ function theme_rochdora_get_children($pid){
         $child_info = array();
         $child_info['class'][] = 'active';
         $child_info['pid'] = $child_pid;
+        $child_info['parent_pid'] = $pid;
 
         if(isset($sibling_object['TN']) && 
            islandora_datastream_access(ISLANDORA_VIEW_OBJECTS, $sibling_object['TN'])){

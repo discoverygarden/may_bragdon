@@ -1,79 +1,176 @@
 <?php
 
 /**
- * Constructs the default navigation block for a compound.
- *
- * @param AbstractObject $object
- *   If supplied the object to create the block for.
- *
- * @return array
- *   Renderable array for the block.
+ * Implements hook_preprocess(). This allows the large image display for 
+ * includsions to be edited if needed.
  */
-function may_bragdon_compound_object_navigation_block(AbstractObject $object = NULL) {
-  module_load_include('inc', 'islandora', 'includes/utilities');
-  drupal_add_css(drupal_get_path('module', 'islandora_compound_object') . '/css/islandora_compound_object.block.css');
-  $object = $object ? $object : menu_get_object('islandora_object', 2);
-  if ($object) {
-    // If only compound cmodel objects can be compound, this isn't necessary.
-    $children = islandora_compound_object_get_parts($object->id);
-    $pid = (!empty($children)) ? $children[0] : $object->id;
-    $object = islandora_object_load($pid);
-    $output = '';
-    if ($object) {
-      $compound_info = islandora_compound_object_retrieve_compound_info($object);
-      // This object is part of a compound object.
-      if (!empty($compound_info)) {
-        $prev_next = theme('islandora_compound_prev_next', $compound_info);
-        $output .= $prev_next;
-      }
+function may_bragdon_preprocess_islandora_large_image(&$variables) {
+   
+   module_load_include('inc', 'may_bragdon', 'theme/theme');
+   module_load_include('inc', 'islandora', 'includes/utilities');
+   $themed_siblings = array();
+   $islandora_object = $variables['islandora_object'];
+   
+    
+   $compound_info = islandora_compound_object_retrieve_compound_info($islandora_object);
 
-      if (!empty($output)) {
-        return array('#markup' => $output);
-      }
-    }
+ 
+
+   /*
+   
+   $variables['islandora_content'] = array();
+   if ($compound_info['siblings'] > 1 ) {
+       $themed_siblings = theme_rochdora_get_children($compound_info['parent_pid']);
+       foreach($themed_siblings as $sibling){
+           $params = array(
+            'title' => $sibling['label'],
+            'path' => url("islandora/object/{$sibling['pid']}/datastream/JPG/view"),
+            );
+            $variables['islandora_content'][] = array('title' => $sibling['label'], 'content'=> theme('image', $params));  
+        }
+    } else {
+        $params = array(
+         'title' => $islandora_object->label,
+         'path' => url("islandora/object/{$islandora_object->id}/datastream/JPG/view"),
+       );
+       $variables['islandora_content'][] = theme('image', $params);  
+   } 
+  
+   $variables['themed_siblings'] = $themed_siblings;
+    * 
+    */
+   $parts = islandora_object_load($compound_info['parent_pid']);
+   
+   // Need at least title, full name of at least one author, publication year.
+  if (!isset($parts['MODS']) || !islandora_datastream_access(ISLANDORA_VIEW_OBJECTS, $parts['MODS'])) {
+    return FALSE;
   }
+  else {
+    $info = get_data($parts);  
+    
+    $tags = array();
+    $tags['citation_author'] = array();
+    $mods = $parts['MODS']->content;
+    $mods_xml = new SimpleXMLElement($mods);
+    $mods_xml->registerXPathNamespace('mods', 'http://www.loc.gov/mods/v3');
+    
+
+    //$title_results = $mods_xml->xpath('//mods:mods[1]/mods:titleInfo/mods:title');
+    //$title = (string) reset($title_results);
+  }
+
 }
+
+/**
+ * Method to get the mods data if needed currently NOT Used
+ * 
+ * @param type $object
+ * @return type
+ */
+function get_data($object){
+    
+    if (!(isset($object['MODS']) && islandora_datastream_access(ISLANDORA_VIEW_OBJECTS, $object['MODS']))) {
+    return array();
+  }
+    $fields = array(
+    'Title' => '//mods:title',
+    'Subtitle' => '//mods:subTitle',
+    'Date' => '//mods:dateCreated | //mods:dateIssued',
+    'Name' => array('//mods:name', 'mods:namePart'),
+    'Abstract' => '//mods:abstract',
+    'Identifier' => '//mods:identifier',
+    'Physical Description' => array('//mods:physicalDescription', 'mods:extent | mods:form | mods:note[not(@*)] | mods:note[@type="physical"] | mods:note[@type="details"] | mods:scale | mods:coordinates'),
+    'Topic' => '/mods:mods/mods:subject/mods:topic',
+    'Continent' => '//mods:continent',
+    'Country' => '//mods:country',
+    'Province' => '//mods:province',
+    'County' => '//mods:county',
+    'Region/Lot' => '//mods:region',
+    'City' => '//mods:city',
+    'City Section' => '//mods:citySection',
+    'Access' => '//mods:accessCondition',
+    'Use and Reproduction' => '//mods:accessCondition[@type="useAndReproduction"]',
+    'Restrictions on Access' => '//mods:accessCondition[@type="restrictionOnAccess"]',
+    'Physical Location' => '//mods:physicalLocation',
+  );
+  
+  $xml = simplexml_load_string($object['MODS']->content);
+  
+  $import = importFromXMLString($object['MODS']->content, 
+          'http://www.loc.gov/mods/v3');
+  
+  
+  
+  $xml->registerXPathNamespace('mods', 'http://www.loc.gov/mods/v3');
+  $to_string = function($o) {
+    return (string) $o;
+  };
+  // Query each context node with the given xpath.
+  $query_each_context = function (array $contexts, $xpath) {
+    $query = function(&$context, $key, $xpath) {
+      $context->registerXPathNamespace('mods', 'http://www.loc.gov/mods/v3');
+      $context = $context->xpath($xpath);
+    };
+    // Map values to each context node.
+    array_walk($contexts, $query, $xpath);
+    // Flatten to an array of values.
+    return count($contexts) ? call_user_func_array('array_merge', $contexts) : array();
+  };
+  // Query the given xpath. If the xpath is any array the first value is the
+  // xpath for the context node(s) and the second the path to the value fields.
+  $query = function(SimpleXMLElement $xml, $xpath) use(&$query_each_context) {
+    return is_string($xpath) ? $xml->xpath($xpath) : $query_each_context($xml->xpath($xpath[0]), $xpath[1]);
+  };
+  foreach ($fields as $label => $xpath) {
+    $results = $query($xml, $xpath);
+    // Remove empty values.
+    $fields[$label] = array_filter(array_map($to_string, $results));
+  }
+  // Remove empty fields.
+  return array_filter($fields);
+}
+
+  /**
+   * Creates a new instance of the class by parsing dc_xml.
+   *
+   * @param string $xml 
+   * @param namespace information e.g. http://www.loc.gov/mods/v3
+   *
+   * @return key/value pair of xml data
+   *   The instantiated object.
+   */
+ function importFromXMLString($xml, $namespace) {
+    $dc_doc = new DomDocument();
+    if (!empty($xml) && $dc_doc->loadXML($xml)) {
+      $tags = $dc_doc->getElementsByTagNameNS($namespace, '*');
+      $xml_data = array();
+      foreach ($tags as $child) {
+        $xml_data[$child->nodeName][] = $child->nodeValue;
+      }
+      return $xml_data;
+    }
+    return NULL;
+  }
+
 
 /**
  * modify the theme registry to use the rochester template
  */
 function may_bragdon_theme_registry_alter(&$theme_registry) {
-  //watchdog("rochdora", "theme registry alter");
-  //template_preprocess_rochdora_compound_prev_next("blah");
+  
+  $module_path = drupal_get_path('module', 'may_bragdon');
   if (isset($theme_registry['islandora_compound_prev_next'])) {
-    $module_path = drupal_get_path('module', 'may_bragdon');
+    
     $theme_registry['islandora_compound_prev_next']['theme path'] = $module_path . '/theme';
     $theme_registry['islandora_compound_prev_next']['template'] = $module_path . '/theme/may-bragdon-compound-prev-next';
     $theme_registry['islandora_compound_prev_next']['includes'][0] = $module_path . '/theme/theme.inc';
   }
   
+  if (isset($theme_registry['islandora_large_image'])) {
+    $theme_registry['islandora_large_image']['theme path'] = $module_path . '/theme';
+    $theme_registry['islandora_large_image']['template'] = $module_path . '/theme/islandora-large-image';
+    
+  }
+  
 }
 
-/**
- * Implements hook_block_info().
- *
- * Prints a compound block on books.
- */
-function may_bragdon_block_view_islandora_compound_object_compound_navigation_alter(&$data, $block) {
-    $object = menu_get_object('islandora_object', 2);
-  if ($object && !$data['content'] && in_array('islandora:bookCModel', $object->models)) {
-    module_load_include('inc', 'islandora_compound_object', 'includes/blocks');
-    module_load_include('inc', 'islandora_paged_content', 'includes/utilities');
-    $page = isset($_GET['islandora_paged_content_page']) ? $_GET['islandora_paged_content_page'] : 1;
-    $pages = islandora_paged_content_get_pages($object);
-    foreach ($pages as $page_array) {
-      if ($page_array['page'] == $page) {
-        $page_object = islandora_object_load($page_array['pid']);
-        break;
-      }
-    }
-    $data['content'] = may_bragdon_compound_object_navigation_block($page_object);
-    // Using a hidden value to populate the sidebar.
-    if (!$data['content']) {
-      $data['content'] = array(
-        '#type' => 'hidden',
-      );
-    }
-    drupal_add_js(drupal_get_path('module', 'rochdora') . '/js/book_page_compound_block.js');
-  }
-}
