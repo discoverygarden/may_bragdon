@@ -69,9 +69,7 @@ function theme_rochdora_get_children($pid){
     
     foreach($children_pids as $child_pid){
         
-        //load the child object
-        $child_object = islandora_object_load($child_pid);
-        
+        //load the sibling object
         $sibling_object = islandora_object_load($child_pid);
         
         $child_info = array();
