@@ -55,7 +55,7 @@
                                                 'path' => $child['TN'],
                                                 'attributes' => array('class' => $child['class']),
                                             )
-                                    ), 'islandora/object/' . $child['parent_pid'], array('html' => TRUE)
+                                    ), 'islandora/object/' . $child['pid'], array('html' => TRUE)
                         );
                         ?>
                     </div>
