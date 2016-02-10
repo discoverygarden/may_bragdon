@@ -13,7 +13,7 @@
                     return;
                 }
                 
-                //run the original function
+                 //run the original function
                 old_page_update(pid, page_number);
                 
                 // call out to get citation information
@@ -42,8 +42,10 @@
     
     //call the page load function after the first page load
     $(function() {
-        $(".openseadragon-container").css("position", "absolute");
-         
+        if( $(".openseadragon-container").length){
+            $(".openseadragon-container").css("position", "absolute");
+        }
+        
         if($("#islandora_paged_tei_seadragon_pager").length) {
             Drupal.settings.islandora_paged_tei_seadragon_update_page(
                 $("#islandora_paged_tei_seadragon_pager").val(),
