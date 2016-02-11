@@ -19,6 +19,56 @@ function may_bragdon_menu() {
   return $items;
 }
 
+function may_bragdon_menu_alter(&$items){
+    
+    //$items["islandora/object/%islandora_object/tei_viewer/markup"]["page callback"] = "may_bragdon_viewer_get_markup";
+    //dpm($items);
+}
+
+function may_bragdon_preprocess_islandora_paged_tei_seadragon_viewer(&$variables) {
+  //dpm("whoo hoo2");   
+  module_load_include('inc', 'may_bragdon', 'includes/utilities');
+
+  $mod_path = drupal_get_path('module', 'tei_viewer');
+  drupal_add_js(
+    array(
+      'islandora_paged_tei_tei' => array(
+        'populated_tei' => TRUE,
+      ),
+    ),
+    'setting'
+  );
+  drupal_add_js("$mod_path/js/viewer.js");
+
+  $variables['markup'] = may_bragdon_viewer_get_markup(islandora_object_load($variables['page_pid']));
+  $variables['tei_viewer_links'] = array(
+    '#type' => 'markup',
+    'annotate' => array(
+      '#theme' => 'html_tag',
+      '#tag' => 'a',
+      '#value' => t('Annotate'),
+      '#attributes' => array(
+        'id' => 'tei-viewer-annotate',
+        'href' => '#',
+        'title' => t('Annotate'),
+      ),
+    ),
+    'occluded' => array(
+      '#theme' => 'html_tag',
+      '#tag' => 'a',
+      '#value' => t('Occluded Version'),
+      '#attributes' => array(
+        'id' => 'tei-viewer-occluded',
+        'href' => '#',
+        'title' => t('View Occluded'),
+      ),
+    ),
+  );
+  if (isset($variables['button_label'])) {
+    $variables['button_label'] = t('Toggle Text');
+  }
+}
+
 /**
  * Javascript to be added for the may bragdon site.
  * 
@@ -40,30 +90,6 @@ function may_bragdon_preprocess_islandora_large_image(&$variables) {
    $islandora_object = $variables['islandora_object'];
     
    $compound_info = islandora_compound_object_retrieve_compound_info($islandora_object);
-
-   /*
-   
-   $variables['islandora_content'] = array();
-   if ($compound_info['siblings'] > 1 ) {
-       $themed_siblings = theme_rochdora_get_children($compound_info['parent_pid']);
-       foreach($themed_siblings as $sibling){
-           $params = array(
-            'title' => $sibling['label'],
-            'path' => url("islandora/object/{$sibling['pid']}/datastream/JPG/view"),
-            );
-            $variables['islandora_content'][] = array('title' => $sibling['label'], 'content'=> theme('image', $params));  
-        }
-    } else {
-        $params = array(
-         'title' => $islandora_object->label,
-         'path' => url("islandora/object/{$islandora_object->id}/datastream/JPG/view"),
-       );
-       $variables['islandora_content'][] = theme('image', $params);  
-   } 
-  
-   $variables['themed_siblings'] = $themed_siblings;
-    * 
-    */
    $parts = islandora_object_load($compound_info['parent_pid']);
    
    // Need at least title, full name of at least one author, publication year.
@@ -182,13 +208,14 @@ function get_data($object){
  * modify the theme registry to use the rochester template
  */
 function may_bragdon_theme_registry_alter(&$theme_registry) {
-  
+    
   $module_path = drupal_get_path('module', 'may_bragdon');
   if (isset($theme_registry['islandora_compound_prev_next'])) {
     
     $theme_registry['islandora_compound_prev_next']['theme path'] = $module_path . '/theme';
     $theme_registry['islandora_compound_prev_next']['template'] = $module_path . '/theme/may-bragdon-compound-prev-next';
     $theme_registry['islandora_compound_prev_next']['includes'][0] = $module_path . '/theme/theme.inc';
+    $theme_registry['islandora_compound_prev_next']['preprocess functions'][1] = "may_bragdon_template_preprocess_islandora_compound_prev_next";
   }
   
   if (isset($theme_registry['islandora_large_image'])) {
