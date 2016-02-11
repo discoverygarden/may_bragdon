@@ -27,6 +27,7 @@ function may_bragdon_menu_alter(&$items){
 
 function may_bragdon_preprocess_islandora_paged_tei_seadragon_viewer(&$variables) {
   //dpm("whoo hoo2");   
+  /*
   module_load_include('inc', 'may_bragdon', 'includes/utilities');
 
   $mod_path = drupal_get_path('module', 'tei_viewer');
@@ -66,7 +67,7 @@ function may_bragdon_preprocess_islandora_paged_tei_seadragon_viewer(&$variables
   );
   if (isset($variables['button_label'])) {
     $variables['button_label'] = t('Toggle Text');
-  }
+  }*/
 }
 
 /**
