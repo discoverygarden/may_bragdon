@@ -6,7 +6,9 @@
         attach: function (context, settings) {
             // Monkey patch Drupal.settings.islandora_paged_tei_seadragon_update_page
             // to update compound block to ensure we always get the current one.
+            
             var old_page_update = Drupal.settings.islandora_paged_tei_seadragon_update_page;
+            
             Drupal.settings.islandora_paged_tei_seadragon_update_page = function (pid, page_number) {
                 // Drop out here if we are the most current request.
                 if (pid === Drupal.settings.islandora_paged_tei_seadragon.current_page) {
@@ -28,11 +30,11 @@
                         if(response.mods && response.mods.Page){
                             $('#citation_page_number').html(response.mods.Page[0]);
                         } else {
-                             $('#citation_page_number').html("Not Found");  
+                            $('#citation_page_number').html("Not Found");  
                         }
                     },
                     error: function(response){
-                        console.log(response);
+                        //console.log(response);
                     }
                 });
             };
@@ -46,11 +48,26 @@
             $(".openseadragon-container").css("position", "absolute");
         }
         
+        // update the page number on initial load
         if($("#islandora_paged_tei_seadragon_pager").length) {
-            Drupal.settings.islandora_paged_tei_seadragon_update_page(
-                $("#islandora_paged_tei_seadragon_pager").val(),
-                $("#islandora_paged_tei_seadragon_pager").children("option:selected").text()
-            );
+            var pid = $("#islandora_paged_tei_seadragon_pager").val();
+            $.ajax({
+                url: Drupal.settings.basePath + "may_bragdon/mods/" + pid,
+                cache: false,
+                success: function(response) {
+                        if(response.mods && response.mods.Page){
+                            $('#citation_page_number').html(response.mods.Page[0]);
+                        } else {
+                            $('#citation_page_number').html("Not Found");  
+                        }
+                },
+                error: function(response){
+                    //console.log(response);
+                }
+            });
+            
         }
     });
+        
+   
 })(jQuery);
