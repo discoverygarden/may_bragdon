@@ -210,11 +210,11 @@ function may_bragdon_simple_search_form($form, &$form_state) {
     '#default_value' => '',
   );
 
- /**$form['simple']['submit'] = array(
+ $form['simple']['submit'] = array(
     '#type' => 'submit',
     '#value' => t('search'),
-    '#class' => 'btn btn-default form-submit',
-  ); */
+    '#class' => 'hidden',
+  );
 
   return $form;
 }
