@@ -232,7 +232,7 @@ function may_bragdon_theme_registry_alter(&$theme_registry) {
 
 function may_bragdon_simple_search_menu() {
   $items = array();
-  $items[may_bragdon/form] = array(
+  $items[may_bragdon_module/form] = array(
     'title' => 'May Bragdon Simple Search',
     'page callback' => 'drupal_get_form',
     'page arguments' => array('may_bragdon_simple_search_form'),
