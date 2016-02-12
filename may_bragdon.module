@@ -1,11 +1,11 @@
 <?php
 
 /**
- * Implements hook_menu() 
+ * Implements hook_menu()
  */
 function may_bragdon_menu() {
   $items = array();
-  
+
   //allow mods metadata to be loaded for the specified islandora object
   $items['may_bragdon/mods/%islandora_object'] = array(
     'title' => 'Citation Block Callback',
@@ -20,13 +20,13 @@ function may_bragdon_menu() {
 }
 
 function may_bragdon_menu_alter(&$items){
-    
+
     //$items["islandora/object/%islandora_object/tei_viewer/markup"]["page callback"] = "may_bragdon_viewer_get_markup";
     //dpm($items);
 }
 
 function may_bragdon_preprocess_islandora_paged_tei_seadragon_viewer(&$variables) {
-  //dpm("whoo hoo2");   
+  //dpm("whoo hoo2");
   /*
   module_load_include('inc', 'may_bragdon', 'includes/utilities');
 
@@ -72,7 +72,7 @@ function may_bragdon_preprocess_islandora_paged_tei_seadragon_viewer(&$variables
 
 /**
  * Javascript to be added for the may bragdon site.
- * 
+ *
  * @param type $javascript
  */
 function may_bragdon_js_alter(&$javascript){
@@ -80,32 +80,32 @@ function may_bragdon_js_alter(&$javascript){
 }
 
 /**
- * Implements hook_preprocess(). This allows the large image display for 
+ * Implements hook_preprocess(). This allows the large image display for
  * includsions to be edited if needed.
  */
 function may_bragdon_preprocess_islandora_large_image(&$variables) {
-   
+
    module_load_include('inc', 'may_bragdon', 'theme/theme');
    module_load_include('inc', 'islandora', 'includes/utilities');
    $themed_siblings = array();
    $islandora_object = $variables['islandora_object'];
-    
+
    $compound_info = islandora_compound_object_retrieve_compound_info($islandora_object);
    $parts = islandora_object_load($compound_info['parent_pid']);
-   
+
    // Need at least title, full name of at least one author, publication year.
   if (!isset($parts['MODS']) || !islandora_datastream_access(ISLANDORA_VIEW_OBJECTS, $parts['MODS'])) {
     return FALSE;
   }
   else {
-    $info = get_data($parts);  
-    
+    $info = get_data($parts);
+
     $tags = array();
     $tags['citation_author'] = array();
     $mods = $parts['MODS']->content;
     $mods_xml = new SimpleXMLElement($mods);
     $mods_xml->registerXPathNamespace('mods', 'http://www.loc.gov/mods/v3');
-    
+
 
     //$title_results = $mods_xml->xpath('//mods:mods[1]/mods:titleInfo/mods:title');
     //$title = (string) reset($title_results);
@@ -114,13 +114,13 @@ function may_bragdon_preprocess_islandora_large_image(&$variables) {
 }
 
 /**
- * Method to get the mods data if needed 
- * 
+ * Method to get the mods data if needed
+ *
  * @param type $object
  * @return type
  */
 function get_data($object){
-    
+
     if (!(isset($object['MODS']) && islandora_datastream_access(ISLANDORA_VIEW_OBJECTS, $object['MODS']))) {
     return array();
   }
@@ -146,14 +146,14 @@ function get_data($object){
     'Restrictions on Access' => '//mods:accessCondition[@type="restrictionOnAccess"]',
     'Physical Location' => '//mods:physicalLocation',
   );
-  
+
   $xml = simplexml_load_string($object['MODS']->content);
-  
-  $import = importFromXMLString($object['MODS']->content, 
+
+  $import = importFromXMLString($object['MODS']->content,
           'http://www.loc.gov/mods/v3');
-  
-  
-  
+
+
+
   $xml->registerXPathNamespace('mods', 'http://www.loc.gov/mods/v3');
   $to_string = function($o) {
     return (string) $o;
@@ -190,7 +190,7 @@ function get_data($object){
    * @param namespace information e.g. http://www.loc.gov/mods/v3
    *
    * @return key/value pair of xml data or null if the data stream does not exist
-   *  
+   *
    */
  function importFromXMLString($xml, $namespace) {
     $dc_doc = new DomDocument();
@@ -209,20 +209,50 @@ function get_data($object){
  * modify the theme registry to use the rochester template
  */
 function may_bragdon_theme_registry_alter(&$theme_registry) {
-    
+
   $module_path = drupal_get_path('module', 'may_bragdon');
   if (isset($theme_registry['islandora_compound_prev_next'])) {
-    
+
     $theme_registry['islandora_compound_prev_next']['theme path'] = $module_path . '/theme';
     $theme_registry['islandora_compound_prev_next']['template'] = $module_path . '/theme/may-bragdon-compound-prev-next';
     $theme_registry['islandora_compound_prev_next']['includes'][0] = $module_path . '/theme/theme.inc';
     $theme_registry['islandora_compound_prev_next']['preprocess functions'][1] = "may_bragdon_template_preprocess_islandora_compound_prev_next";
   }
-  
+
   if (isset($theme_registry['islandora_large_image'])) {
     $theme_registry['islandora_large_image']['theme path'] = $module_path . '/theme';
     $theme_registry['islandora_large_image']['template'] = $module_path . '/theme/islandora-large-image';
-    
+
   }
 }
 
+/**
+ * Define the URL for the page created
+ */
+
+function may_bragdon_simple_search_menu() {
+  $items = array();
+  $items[may_bragdon/form] = array(
+    'title' => 'May Bragdon Simple Search',
+    'page callback' => 'drupal_get_form',
+    'page arguments' => array('may_bragdon_simple_search_form'),
+    'access arguments' => array('access content'),
+    'description' => 'Simple Search for May Bragdon',
+    'type' => MENU_CALLBACK,
+  );
+
+  return $items;
+}
+
+/**
+ * Form builder function.
+ */
+
+function may_bragdon_simple_search_form($form, &$form_state) {
+
+  $form['search_term'] = array(
+    '#type' => 'textfield',
+    '#title' => t('Search'),
+  );
+  return $form;
+}
