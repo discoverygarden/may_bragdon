@@ -189,6 +189,10 @@ function may_bragdon_theme_registry_alter(&$theme_registry) {
 
 function may_bragdon_simple_search_form($form, &$form_state) {
 
+  $form['#attributes'] = array(
+    'class' => 'navbar-form navbar-left',
+  );
+
   $form['simple'] = array(
     '#type' => 'container',
     '#attributes' => array(
@@ -197,13 +201,15 @@ function may_bragdon_simple_search_form($form, &$form_state) {
       ),
     ),
   );
+
   $form['simple']["islandora_simple_search_query"] = array(
     '#size' => '15',
     '#type' => 'textfield',
     '#title' => '',
-    // @todo Should this be the searched value?
+    '#class' => 'navbar-search-grow',
     '#default_value' => '',
   );
+
   $form['simple']['submit'] = array(
     '#type' => 'submit',
     '#value' => t('search'),
