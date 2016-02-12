@@ -206,14 +206,14 @@ function may_bragdon_simple_search_form($form, &$form_state) {
     '#size' => '15',
     '#type' => 'textfield',
     '#title' => '',
-    '#class' => 'navbar-search-grow',
+    '#attributes' => array('class' => array('navbar-search-grow')),
     '#default_value' => '',
   );
 
  $form['simple']['submit'] = array(
     '#type' => 'submit',
     '#value' => t('search'),
-    '#class' => 'hidden btn',
+    '#attributes' => array('class' => array('hidden')),
   );
 
   return $form;
