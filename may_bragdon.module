@@ -16,6 +16,15 @@ function may_bragdon_menu() {
     'file' => 'includes/callbacks.inc',
     'type' => MENU_NORMAL_ITEM,
   );
+
+  $items['may_bragdon_module/form'] = array(
+    'title' => 'May Bragdon Simple Search',
+    'page callback' => 'drupal_get_form',
+    'page arguments' => array('may_bragdon_simple_search_form'),
+    'access arguments' => array('access content'),
+    'description' => 'Simple Search for May Bragdon',
+    'type' => MENU_CALLBACK,
+  );
   return $items;
 }
 
@@ -173,24 +182,6 @@ function may_bragdon_theme_registry_alter(&$theme_registry) {
     $theme_registry['islandora_large_image']['template'] = $module_path . '/theme/islandora-large-image';
 
   }
-}
-
-/**
- * Define the URL for the page created
- */
-
-function may_bragdon_simple_search_menu() {
-  $items = array();
-  $items[may_bragdon_module/form] = array(
-    'title' => 'May Bragdon Simple Search',
-    'page callback' => 'drupal_get_form',
-    'page arguments' => array('may_bragdon_simple_search_form'),
-    'access arguments' => array('access content'),
-    'description' => 'Simple Search for May Bragdon',
-    'type' => MENU_CALLBACK,
-  );
-
-  return $items;
 }
 
 /**
