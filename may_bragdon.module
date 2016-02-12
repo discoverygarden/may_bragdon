@@ -190,6 +190,8 @@ function may_bragdon_theme_registry_alter(&$theme_registry) {
 
 function may_bragdon_simple_search_form($form, &$form_state) {
 
+  $form['#action'] = url('islandora/search/');
+
   $form['search_term'] = array(
     '#type' => 'textfield',
     '#title' => t('Search'),
@@ -197,7 +199,7 @@ function may_bragdon_simple_search_form($form, &$form_state) {
 
   $form['submit'] = array(
     '#type' => 'submit',
-    '#value' => 'search',
+    '#value' => 'Search',
     '#name' => 'op',
     '#class' => 'btn btn-default form-submit',
   );
