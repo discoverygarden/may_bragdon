@@ -19,57 +19,6 @@ function may_bragdon_menu() {
   return $items;
 }
 
-function may_bragdon_menu_alter(&$items){
-
-    //$items["islandora/object/%islandora_object/tei_viewer/markup"]["page callback"] = "may_bragdon_viewer_get_markup";
-    //dpm($items);
-}
-
-function may_bragdon_preprocess_islandora_paged_tei_seadragon_viewer(&$variables) {
-  //dpm("whoo hoo2");
-  /*
-  module_load_include('inc', 'may_bragdon', 'includes/utilities');
-
-  $mod_path = drupal_get_path('module', 'tei_viewer');
-  drupal_add_js(
-    array(
-      'islandora_paged_tei_tei' => array(
-        'populated_tei' => TRUE,
-      ),
-    ),
-    'setting'
-  );
-  drupal_add_js("$mod_path/js/viewer.js");
-
-  $variables['markup'] = may_bragdon_viewer_get_markup(islandora_object_load($variables['page_pid']));
-  $variables['tei_viewer_links'] = array(
-    '#type' => 'markup',
-    'annotate' => array(
-      '#theme' => 'html_tag',
-      '#tag' => 'a',
-      '#value' => t('Annotate'),
-      '#attributes' => array(
-        'id' => 'tei-viewer-annotate',
-        'href' => '#',
-        'title' => t('Annotate'),
-      ),
-    ),
-    'occluded' => array(
-      '#theme' => 'html_tag',
-      '#tag' => 'a',
-      '#value' => t('Occluded Version'),
-      '#attributes' => array(
-        'id' => 'tei-viewer-occluded',
-        'href' => '#',
-        'title' => t('View Occluded'),
-      ),
-    ),
-  );
-  if (isset($variables['button_label'])) {
-    $variables['button_label'] = t('Toggle Text');
-  }*/
-}
-
 /**
  * Javascript to be added for the may bragdon site.
  *
@@ -219,7 +168,6 @@ function may_bragdon_theme_registry_alter(&$theme_registry) {
     $theme_registry['islandora_compound_prev_next']['preprocess functions'][1] = "may_bragdon_template_preprocess_islandora_compound_prev_next";
   }
 
-    
   if (isset($theme_registry['islandora_large_image'])) {
     $theme_registry['islandora_large_image']['theme path'] = $module_path . '/theme';
     $theme_registry['islandora_large_image']['template'] = $module_path . '/theme/islandora-large-image';
