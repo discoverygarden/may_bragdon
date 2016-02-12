@@ -207,6 +207,7 @@ function may_bragdon_simple_search_form($form, &$form_state) {
     '#type' => 'textfield',
     '#title' => '',
     '#attributes' => array('class' => array('navbar-search-grow')),
+    '#attributes' => array('placeholder' => array('Search')),
     '#default_value' => '',
   );
 
