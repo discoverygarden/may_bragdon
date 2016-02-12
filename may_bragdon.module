@@ -190,7 +190,7 @@ function may_bragdon_theme_registry_alter(&$theme_registry) {
 
 function may_bragdon_simple_search_form($form, &$form_state) {
 
-  $form['#action'] = url('islandora/search/');
+  $form['#action'] = url('islandora/search/'. $edit['nid']);
 
   $form['search_term'] = array(
     '#type' => 'textfield',
