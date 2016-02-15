@@ -214,7 +214,7 @@ function may_bragdon_simple_search_form($form, &$form_state) {
  $form['simple']['submit'] = array(
     '#type' => 'submit',
     '#value' => t('search'),
-    '#attributes' => array('class' => array('hidden')),
+    '#attributes' => array('class' => array('hidden'), 'aria-hidden' => array('true')),
   );
 
   return $form;
