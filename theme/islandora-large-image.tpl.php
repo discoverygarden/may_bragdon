@@ -24,13 +24,21 @@
 <div class="islandora-large-image-object islandora" vocab="http://schema.org/" prefix="dcterms: http://purl.org/dc/terms/" typeof="ImageObject">
   <div class="islandora-large-image-content-wrapper clearfix">
     <?php if ($islandora_content): ?>
+      
+      
       <?php if (isset($image_clip)): ?>
         <?php print $image_clip; ?>
       <?php endif; ?>
       <div class="islandora-large-image-content">
         <?php print $islandora_content; ?>
       </div>
-      
+      <?php if(!empty($page_of) && !empty($page_number)): ?>
+          <div class="back-to-diary">
+          <?php 
+             print l( 'Back to Diary', 'islandora/object/' . $page_of ,  array('query' => array('islandora_paged_content_page' => $page_number)));
+          ?>
+          </div>     
+      <?php endif; ?>
     <?php endif; ?>
   </div>
   <div class="islandora-large-image-metadata">

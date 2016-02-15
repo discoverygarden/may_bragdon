@@ -4,37 +4,37 @@
  * Implements hook_menu()
  */
 function may_bragdon_menu() {
-  $items = array();
+    $items = array();
 
-  //allow mods metadata to be loaded for the specified islandora object
-  $items['may_bragdon/mods/%islandora_object'] = array(
-    'title' => 'Citation Block Callback',
-    'access callback' => 'islandora_object_access_callback',
-    'access arguments' => array(ISLANDORA_VIEW_OBJECTS, 2),
-    'page callback' => 'may_bragdon_object_mods',
-    'page arguments' => array(2),
-    'file' => 'includes/callbacks.inc',
-    'type' => MENU_NORMAL_ITEM,
-  );
+    //allow mods metadata to be loaded for the specified islandora object
+    $items['may_bragdon/mods/%islandora_object'] = array(
+        'title' => 'Citation Block Callback',
+        'access callback' => 'islandora_object_access_callback',
+        'access arguments' => array(ISLANDORA_VIEW_OBJECTS, 2),
+        'page callback' => 'may_bragdon_object_mods',
+        'page arguments' => array(2),
+        'file' => 'includes/callbacks.inc',
+        'type' => MENU_NORMAL_ITEM,
+    );
 
-  //the form will not be shown and instead will execute a search that
-  //returns all results.
-  //
+    //the form will not be shown and instead will execute a search that
+    //returns all results.
+    //
   //The submit button is hidden so it will not show up correctly in the
-  //may bragdon theme - add the following to make the form show up for 
-  //other themes - and make sure the button is not hidden
-  //
+    //may bragdon theme - add the following to make the form show up for 
+    //other themes - and make sure the button is not hidden
+    //
   //  'page arguments' => array('may_bragdon_simple_search_form'),
-  //  'page callback' => 'drupal_get_form',
-  //  
-  $items['may_bragdon_module/form'] = array(
-    'title' => 'May Bragdon Simple Search',
-    'page callback' => 'islandora_solr',
-    'access arguments' => array('search islandora solr'),
-    'description' => 'Simple Search for May Bragdon',
-    'type' => MENU_CALLBACK,
-  );
-  return $items;
+    //  'page callback' => 'drupal_get_form',
+    //  
+    $items['may_bragdon_module/form'] = array(
+        'title' => 'May Bragdon Simple Search',
+        'page callback' => 'islandora_solr',
+        'access arguments' => array('search islandora solr'),
+        'description' => 'Simple Search for May Bragdon',
+        'type' => MENU_CALLBACK,
+    );
+    return $items;
 }
 
 /**
@@ -42,7 +42,7 @@ function may_bragdon_menu() {
  *
  * @param type $javascript
  */
-function may_bragdon_js_alter(&$javascript){
+function may_bragdon_js_alter(&$javascript) {
     drupal_add_js(drupal_get_path('module', 'may_bragdon') . '/js/citation_compound_block.js');
 }
 
@@ -52,34 +52,78 @@ function may_bragdon_js_alter(&$javascript){
  */
 function may_bragdon_preprocess_islandora_large_image(&$variables) {
 
-   module_load_include('inc', 'may_bragdon', 'theme/theme');
-   module_load_include('inc', 'islandora', 'includes/utilities');
-   $themed_siblings = array();
-   $islandora_object = $variables['islandora_object'];
+    module_load_include('inc', 'may_bragdon', 'theme/theme');
+    module_load_include('inc', 'islandora', 'includes/utilities');
+    $themed_siblings = array();
+    $islandora_object = $variables['islandora_object'];
 
-   $compound_info = islandora_compound_object_retrieve_compound_info($islandora_object);
-   
-   
-   $parts = islandora_object_load($compound_info['parent_pid']);
+    $compound_info = islandora_compound_object_retrieve_compound_info($islandora_object);
 
-   // Need at least title, full name of at least one author, publication year.
-  if (!isset($parts['MODS']) || !islandora_datastream_access(ISLANDORA_VIEW_OBJECTS, $parts['MODS'])) {
-    return FALSE;
-  }
-  else {
-    $info = get_data($parts);
+    // get to the top parent to find the page number
+    $compund_parent_info = null;
+    $parent = null;
+    if (array_key_exists("parent_pid", $compound_info)) {
+        $parent_pid = $compound_info["parent_pid"];
+        while (!empty($parent_pid)) {
+            $parent = islandora_object_load($parent_pid);
+            $compund_parent_info = islandora_compound_object_retrieve_compound_info($parent);
+            if (array_key_exists("parent_pid", $compund_parent_info)) {
+                $parent_pid = $compund_parent_info["parent_pid"];
+            } else {
+                $parent_pid = null;
+            }
+        }
+    }
+    
+    
+    $pageOf = getRelsData($parent, 'isPageOf');
+    $pageNum = getRelsData($parent, 'isPageNumber');
+    if($pageOf && $pageNum){
+        $variables['page_number'] = $pageNum;
+        $variables['page_of'] = $pageOf;
+    }
 
-    $tags = array();
-    $tags['citation_author'] = array();
-    $mods = $parts['MODS']->content;
-    $mods_xml = new SimpleXMLElement($mods);
-    $mods_xml->registerXPathNamespace('mods', 'http://www.loc.gov/mods/v3');
+    $parts = islandora_object_load($compound_info['parent_pid']);
+
+    // Need at least title, full name of at least one author, publication year.
+    if (!isset($parts['MODS']) || !islandora_datastream_access(ISLANDORA_VIEW_OBJECTS, $parts['MODS'])) {
+        return FALSE;
+    } else {
+        $info = get_data($parts);
+
+        $tags = array();
+        $tags['citation_author'] = array();
+        $mods = $parts['MODS']->content;
+        $mods_xml = new SimpleXMLElement($mods);
+        $mods_xml->registerXPathNamespace('mods', 'http://www.loc.gov/mods/v3');
 
 
-    //$title_results = $mods_xml->xpath('//mods:mods[1]/mods:titleInfo/mods:title');
-    //$title = (string) reset($title_results);
-  }
+        //$title_results = $mods_xml->xpath('//mods:mods[1]/mods:titleInfo/mods:title');
+        //$title = (string) reset($title_results);
+    }
+}
 
+/**
+ * Returns the string value of the relationship data
+ *
+ * @param object $object - FedoraObject
+ * @param value $value - relationship data to find
+ *   
+ *
+ * @return string|bool
+ *   Returns the value if found otherwise if there is no such membership, returns FALSE.
+ */
+function getRelsData($object, $value) {
+    if (!empty($object)) {
+        $rels = $object->relationships->get(ISLANDORA_RELS_EXT_URI, $value);
+        $rel = reset($rels);
+        if ($rel) {
+            return $rel['object']['value'];
+        }
+        return FALSE;
+    }else{
+        return FALSE;
+    }
 }
 
 /**
@@ -88,160 +132,157 @@ function may_bragdon_preprocess_islandora_large_image(&$variables) {
  * @param type $object
  * @return type
  */
-function get_data($object){
+function get_data($object) {
 
     if (!(isset($object['MODS']) && islandora_datastream_access(ISLANDORA_VIEW_OBJECTS, $object['MODS']))) {
-    return array();
-  }
+        return array();
+    }
     $fields = array(
-    'Title' => '//mods:title',
-    'Subtitle' => '//mods:subTitle',
-    'Date' => '//mods:dateCreated | //mods:dateIssued',
-    'Name' => array('//mods:name', 'mods:namePart'),
-    'Abstract' => '//mods:abstract',
-    'Identifier' => '//mods:identifier',
-    'Physical Description' => array('//mods:physicalDescription', 'mods:extent | mods:form | mods:note[not(@*)] | mods:note[@type="physical"] | mods:note[@type="details"] | mods:scale | mods:coordinates'),
-    'Page' => array('//mods:physicalDescription', 'mods:extent'),
-    'Topic' => '/mods:mods/mods:subject/mods:topic',
-    'Continent' => '//mods:continent',
-    'Country' => '//mods:country',
-    'Province' => '//mods:province',
-    'County' => '//mods:county',
-    'Region/Lot' => '//mods:region',
-    'City' => '//mods:city',
-    'City Section' => '//mods:citySection',
-    'Access' => '//mods:accessCondition',
-    'Use and Reproduction' => '//mods:accessCondition[@type="useAndReproduction"]',
-    'Restrictions on Access' => '//mods:accessCondition[@type="restrictionOnAccess"]',
-    'Physical Location' => '//mods:physicalLocation',
-  );
+        'Title' => '//mods:title',
+        'Subtitle' => '//mods:subTitle',
+        'Date' => '//mods:dateCreated | //mods:dateIssued',
+        'Name' => array('//mods:name', 'mods:namePart'),
+        'Abstract' => '//mods:abstract',
+        'Identifier' => '//mods:identifier',
+        'Physical Description' => array('//mods:physicalDescription', 'mods:extent | mods:form | mods:note[not(@*)] | mods:note[@type="physical"] | mods:note[@type="details"] | mods:scale | mods:coordinates'),
+        'Page' => array('//mods:physicalDescription', 'mods:extent'),
+        'Topic' => '/mods:mods/mods:subject/mods:topic',
+        'Continent' => '//mods:continent',
+        'Country' => '//mods:country',
+        'Province' => '//mods:province',
+        'County' => '//mods:county',
+        'Region/Lot' => '//mods:region',
+        'City' => '//mods:city',
+        'City Section' => '//mods:citySection',
+        'Access' => '//mods:accessCondition',
+        'Use and Reproduction' => '//mods:accessCondition[@type="useAndReproduction"]',
+        'Restrictions on Access' => '//mods:accessCondition[@type="restrictionOnAccess"]',
+        'Physical Location' => '//mods:physicalLocation',
+    );
 
-  $xml = simplexml_load_string($object['MODS']->content);
+    $xml = simplexml_load_string($object['MODS']->content);
 
-  $import = importFromXMLString($object['MODS']->content,
-          'http://www.loc.gov/mods/v3');
-
+    $import = importFromXMLString($object['MODS']->content, 'http://www.loc.gov/mods/v3');
 
 
-  $xml->registerXPathNamespace('mods', 'http://www.loc.gov/mods/v3');
-  $to_string = function($o) {
-    return (string) $o;
-  };
-  // Query each context node with the given xpath.
-  $query_each_context = function (array $contexts, $xpath) {
-    $query = function(&$context, $key, $xpath) {
-      $context->registerXPathNamespace('mods', 'http://www.loc.gov/mods/v3');
-      $context = $context->xpath($xpath);
+
+    $xml->registerXPathNamespace('mods', 'http://www.loc.gov/mods/v3');
+    $to_string = function($o) {
+        return (string) $o;
     };
-    // Map values to each context node.
-    array_walk($contexts, $query, $xpath);
-    // Flatten to an array of values.
-    return count($contexts) ? call_user_func_array('array_merge', $contexts) : array();
-  };
-  // Query the given xpath. If the xpath is any array the first value is the
-  // xpath for the context node(s) and the second the path to the value fields.
-  $query = function(SimpleXMLElement $xml, $xpath) use(&$query_each_context) {
-    return is_string($xpath) ? $xml->xpath($xpath) : $query_each_context($xml->xpath($xpath[0]), $xpath[1]);
-  };
-  foreach ($fields as $label => $xpath) {
-    $results = $query($xml, $xpath);
-    // Remove empty values.
-    $fields[$label] = array_filter(array_map($to_string, $results));
-  }
-  // Remove empty fields.
-  return array_filter($fields);
+    // Query each context node with the given xpath.
+    $query_each_context = function (array $contexts, $xpath) {
+        $query = function(&$context, $key, $xpath) {
+            $context->registerXPathNamespace('mods', 'http://www.loc.gov/mods/v3');
+            $context = $context->xpath($xpath);
+        };
+        // Map values to each context node.
+        array_walk($contexts, $query, $xpath);
+        // Flatten to an array of values.
+        return count($contexts) ? call_user_func_array('array_merge', $contexts) : array();
+    };
+    // Query the given xpath. If the xpath is any array the first value is the
+    // xpath for the context node(s) and the second the path to the value fields.
+    $query = function(SimpleXMLElement $xml, $xpath) use(&$query_each_context) {
+        return is_string($xpath) ? $xml->xpath($xpath) : $query_each_context($xml->xpath($xpath[0]), $xpath[1]);
+    };
+    foreach ($fields as $label => $xpath) {
+        $results = $query($xml, $xpath);
+        // Remove empty values.
+        $fields[$label] = array_filter(array_map($to_string, $results));
+    }
+    // Remove empty fields.
+    return array_filter($fields);
 }
 
-  /**
-   * Creates a new instance of the class by parsing the specifed namespace
-   *
-   * @param string $xml data stream to load
-   * @param namespace information e.g. http://www.loc.gov/mods/v3
-   *
-   * @return key/value pair of xml data or null if the data stream does not exist
-   *
-   */
- function importFromXMLString($xml, $namespace) {
+/**
+ * Creates a new instance of the class by parsing the specifed namespace
+ *
+ * @param string $xml data stream to load
+ * @param namespace information e.g. http://www.loc.gov/mods/v3
+ *
+ * @return key/value pair of xml data or null if the data stream does not exist
+ *
+ */
+function importFromXMLString($xml, $namespace) {
     $dc_doc = new DomDocument();
     if (!empty($xml) && $dc_doc->loadXML($xml)) {
-      $tags = $dc_doc->getElementsByTagNameNS($namespace, '*');
-      $xml_data = array();
-      foreach ($tags as $child) {
-        $xml_data[$child->nodeName][] = $child->nodeValue;
-      }
-      return $xml_data;
+        $tags = $dc_doc->getElementsByTagNameNS($namespace, '*');
+        $xml_data = array();
+        foreach ($tags as $child) {
+            $xml_data[$child->nodeName][] = $child->nodeValue;
+        }
+        return $xml_data;
     }
     return NULL;
-  }
+}
 
 /**
  * modify the theme registry to use the rochester template
  */
 function may_bragdon_theme_registry_alter(&$theme_registry) {
 
-  $module_path = drupal_get_path('module', 'may_bragdon');
-  if (isset($theme_registry['islandora_compound_prev_next'])) {
+    $module_path = drupal_get_path('module', 'may_bragdon');
+    if (isset($theme_registry['islandora_compound_prev_next'])) {
 
-    $theme_registry['islandora_compound_prev_next']['theme path'] = $module_path . '/theme';
-    $theme_registry['islandora_compound_prev_next']['template'] = $module_path . '/theme/may-bragdon-compound-prev-next';
-    $theme_registry['islandora_compound_prev_next']['includes'][0] = $module_path . '/theme/theme.inc';
-    $theme_registry['islandora_compound_prev_next']['preprocess functions'][1] = "may_bragdon_template_preprocess_islandora_compound_prev_next";
-  }
+        $theme_registry['islandora_compound_prev_next']['theme path'] = $module_path . '/theme';
+        $theme_registry['islandora_compound_prev_next']['template'] = $module_path . '/theme/may-bragdon-compound-prev-next';
+        $theme_registry['islandora_compound_prev_next']['includes'][0] = $module_path . '/theme/theme.inc';
+        $theme_registry['islandora_compound_prev_next']['preprocess functions'][1] = "may_bragdon_template_preprocess_islandora_compound_prev_next";
+    }
 
-  if (isset($theme_registry['islandora_large_image'])) {
-    $theme_registry['islandora_large_image']['theme path'] = $module_path . '/theme';
-    $theme_registry['islandora_large_image']['template'] = $module_path . '/theme/islandora-large-image';
-
-  }
+    if (isset($theme_registry['islandora_large_image'])) {
+        $theme_registry['islandora_large_image']['theme path'] = $module_path . '/theme';
+        $theme_registry['islandora_large_image']['template'] = $module_path . '/theme/islandora-large-image';
+    }
 }
 
 /**
  * Form builder function.
  */
-
 function may_bragdon_simple_search_form($form, &$form_state) {
 
-  $form['#attributes'] = array(
-    'class' => 'navbar-form navbar-left',
-  );
+    $form['#attributes'] = array(
+        'class' => 'navbar-form navbar-left',
+    );
 
-  $form['simple'] = array(
-    '#type' => 'container',
-    '#attributes' => array(
-      'class' => array(
-        'container-inline',
-      ),
-    ),
-  );
+    $form['simple'] = array(
+        '#type' => 'container',
+        '#attributes' => array(
+            'class' => array(
+                'container-inline',
+            ),
+        ),
+    );
 
-  $form['simple']["islandora_simple_search_query"] = array(
-    '#size' => '15',
-    '#type' => 'textfield',
-    '#title' => '',
-    '#attributes' => array('class' => array('navbar-search-grow'), 'placeholder' => array('Search')),
-    //'#attributes' => array('placeholder' => array('Search')),
-    '#default_value' => '',
-  );
+    $form['simple']["islandora_simple_search_query"] = array(
+        '#size' => '15',
+        '#type' => 'textfield',
+        '#title' => '',
+        '#attributes' => array('class' => array('navbar-search-grow'), 'placeholder' => array('Search')),
+        //'#attributes' => array('placeholder' => array('Search')),
+        '#default_value' => '',
+    );
 
- $form['simple']['submit'] = array(
-    '#type' => 'submit',
-    '#value' => t('search'),
-    '#attributes' => array('class' => array('hidden'), 'aria-hidden' => array('true')),
-  );
+    $form['simple']['submit'] = array(
+        '#type' => 'submit',
+        '#value' => t('search'),
+        '#attributes' => array('class' => array('hidden'), 'aria-hidden' => array('true')),
+    );
 
-  return $form;
+    return $form;
 }
 
 function may_bragdon_simple_search_form_submit($form, &$form_state) {
-  module_load_include('inc', 'islandora_solr', 'includes/utilities');
-  $search_string = islandora_solr_replace_slashes($form_state['values']['islandora_simple_search_query']);
+    module_load_include('inc', 'islandora_solr', 'includes/utilities');
+    $search_string = islandora_solr_replace_slashes($form_state['values']['islandora_simple_search_query']);
 
-  $query = array('type' => 'dismax');
+    $query = array('type' => 'dismax');
 
-  $form_state['redirect'] = array(
-    ISLANDORA_SOLR_SEARCH_PATH . "/$search_string",
-    array(
-      'query' => $query,
-    ),
-  );
+    $form_state['redirect'] = array(
+        ISLANDORA_SOLR_SEARCH_PATH . "/$search_string",
+        array(
+            'query' => $query,
+        ),
+    );
 }
