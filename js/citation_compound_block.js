@@ -23,13 +23,12 @@
                     url: Drupal.settings.basePath + "may_bragdon/mods/" + pid,
                     cache: false,
                     success: function(response) {
-                        // Drop out here if we are not the most current request.
-                        if (pid !== Drupal.settings.islandora_paged_tei_seadragon.current_page) {
-                            return;
-                        }
-                        if(response.mods && response.mods.Page){
+                        console.log(response);
+                        if(response.mods !== null && response.mods.Page !== null){
+                            console.log("we have a page");
                             $('#citation_page_number').html(response.mods.Page[0]);
                         } else {
+                            console.log("No page");
                             $('#citation_page_number').html("Not Found");  
                         }
                     },
@@ -55,9 +54,12 @@
                 url: Drupal.settings.basePath + "may_bragdon/mods/" + pid,
                 cache: false,
                 success: function(response) {
-                        if(response.mods && response.mods.Page){
+                        console.log(response);
+                        if(response.mods !== null && response.mods.Page !== null){
+                            console.log("we have a page");
                             $('#citation_page_number').html(response.mods.Page[0]);
                         } else {
+                            console.log("No page");
                             $('#citation_page_number').html("Not Found");  
                         }
                 },
