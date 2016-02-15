@@ -45,7 +45,7 @@
     //call the page load function after the first page load
     $(function() {
         if( $(".openseadragon-container").length){
-            //$(".openseadragon-container").css("position", "absolute");
+            $(".openseadragon-container").css("position", "absolute");
         }
         
         // update the page number on initial load

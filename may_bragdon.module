@@ -52,7 +52,6 @@ function may_bragdon_js_alter(&$javascript){
  */
 function may_bragdon_preprocess_islandora_large_image(&$variables) {
 
-   dpm($variables); 
    module_load_include('inc', 'may_bragdon', 'theme/theme');
    module_load_include('inc', 'islandora', 'includes/utilities');
    $themed_siblings = array();
@@ -60,7 +59,6 @@ function may_bragdon_preprocess_islandora_large_image(&$variables) {
 
    $compound_info = islandora_compound_object_retrieve_compound_info($islandora_object);
    
-   dpm($compound_info);
    
    $parts = islandora_object_load($compound_info['parent_pid']);
 
