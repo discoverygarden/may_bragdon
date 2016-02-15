@@ -46,7 +46,6 @@
     $(function() {
         if( $(".openseadragon-container").length){
             $(".openseadragon-container").css("position", "absolute");
-            $(".openseadragon-container").css("height", "92%");
         }
         
         // update the page number on initial load
