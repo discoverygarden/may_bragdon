@@ -17,6 +17,16 @@ function may_bragdon_menu() {
     'type' => MENU_NORMAL_ITEM,
   );
 
+  //the form will not be shown and instead will execute a search that
+  //returns all results.
+  //
+  //The submit button is hidden so it will not show up correctly in the
+  //may bragdon theme - add the following to make the form show up for 
+  //other themes - and make sure the button is not hidden
+  //
+  //  'page arguments' => array('may_bragdon_simple_search_form'),
+  //  'page callback' => 'drupal_get_form',
+  //  
   $items['may_bragdon_module/form'] = array(
     'title' => 'May Bragdon Simple Search',
     'page callback' => 'islandora_solr',
