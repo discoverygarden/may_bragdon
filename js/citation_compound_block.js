@@ -45,8 +45,9 @@
     $(function() {
         if( $(".openseadragon-container").length){
             $(".openseadragon-container").css("position", "absolute");
-            console.log("here");
             
+            // update the border color of the naviator once it is added to the 
+            // page 
             $('.openseadragon-container').on('DOMNodeInserted', function(e) {
                 if ($(e.target).is('.displayregion')) {
                     $(".displayregion").css("border", "2px solid rgb(95, 187, 255)");
