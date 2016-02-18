@@ -45,10 +45,22 @@
     $(function() {
         if( $(".openseadragon-container").length){
             $(".openseadragon-container").css("position", "absolute");
+            console.log("here");
+            
+            $('.openseadragon-container').on('DOMNodeInserted', function(e) {
+                if ($(e.target).is('.displayregion')) {
+                    $(".displayregion").css("border", "2px solid rgb(95, 187, 255)");
+                }
+            });
         }
+        
+        
+        
+        
         
         // update the page number on initial load
         if($("#islandora_paged_tei_seadragon_pager").length) {
+             
             var pid = $("#islandora_paged_tei_seadragon_pager").val();
             $.ajax({
                 url: Drupal.settings.basePath + "may_bragdon/mods/" + pid,
