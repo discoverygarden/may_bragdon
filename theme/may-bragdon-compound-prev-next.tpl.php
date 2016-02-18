@@ -46,7 +46,7 @@
             <?php foreach ($themed_siblings as $sibling): ?>
                 <div class="bragdon-child-grouping">
                 <?php foreach($sibling as $child): ?>
-                    <h3><?php print $child['label']; ?></h3>
+                    <div class="inclusion-label"><?php print $child['label']; ?></div>
                     <div class="islandora-compound-thumb <?php print(str_replace(' ', '_', trim(strtolower($child['label'])))); ?>">
                         <?php
                         print l(
