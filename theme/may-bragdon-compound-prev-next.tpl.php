@@ -45,8 +45,8 @@
         <div class="islandora-compound-thumbs">
             <?php foreach ($themed_siblings as $sibling): ?>
                 <div class="bragdon-child-grouping">
-                <?php foreach($sibling as $child): ?>
-                    <div class="inclusion-label"><?php print $child['label']; ?></div>
+                <?php foreach($sibling as $key=>$child): ?>
+                    <div class="inclusion-label label-<?php print $key?>"><?php print $child['label']; ?></div>
                     <div class="islandora-compound-thumb <?php print(str_replace(' ', '_', trim(strtolower($child['label'])))); ?>">
                         <?php
                         print l(
