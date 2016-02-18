@@ -52,6 +52,12 @@
                 if ($(e.target).is('.displayregion')) {
                     $(".displayregion").css("border", "2px solid rgb(95, 187, 255)");
                 }
+                if ($(e.target).is('span')) {
+                    $(".navigator").css("border", "");
+                    $(".navigator").css("border-bottom", " 2px solid rgb(85, 85, 85)");
+                    $(".navigator").css("border-left", " 2px solid rgb(85, 85, 85)");
+                }
+                
             });
         }
         
