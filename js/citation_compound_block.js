@@ -40,10 +40,9 @@ var createdDate = "";
                             nameArray = nameArray.split(',');
                             firstName = nameArray[1];
                             lastName = nameArray[0];
-                            console.log(firstName);
                             pageNum = response.mods.Page[0];
                             createdDate = response.mods.Date[0];
-                            $('#apaStyle').append("Title: " + title);
+                            $('#apaStyle').append(lastName + ", " + firstname.substring(0,1) + ". (" + createdDate.substring(0,4) + "). " + title + ". Retrieved from " + retrivedFrom);
                         } else {
                             //console.log("No page");
                             $('#citation_page_number').html("Not Found");
