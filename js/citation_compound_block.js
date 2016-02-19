@@ -5,6 +5,7 @@ var lastName = "";
 var pageNum = "";
 var retrivedFrom = window.location.href;
 var createdDate = "";
+var today = new Date();
 
 (function ($) {
 
@@ -43,6 +44,7 @@ var createdDate = "";
                             pageNum = response.mods.Page[0];
                             createdDate = response.mods.Date[0];
                             $('#apaStyle').append(lastName + ", " + firstName.substring(1,2) + ". (" + createdDate.substring(0,4) + "). <i>" + title + "</i>. Retrieved from " + retrivedFrom);
+                            $('mlaStyle').appen(lastName + ", " + firstName.replace(/\s+/g, '') + ". <i>" + title + "</i>. University of Rochester. Web.  " + today + ".");
                         } else {
                             //console.log("No page");
                             $('#citation_page_number').html("Not Found");
