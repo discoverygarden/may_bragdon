@@ -24,7 +24,6 @@
                     cache: false,
                     success: function(response) {
                         console.log(response);
-                        console.log(response.mods.Title[1]);
                         if(response.mods !== null && response.mods.Page !== null){
                             //console.log("we have a page");
                             $('#citation_page_number').html(response.mods.Page[0]);
@@ -37,6 +36,8 @@
                         //console.log(response);
                     }
                 });
+                var title = response.mods.Title[1];
+                console.log(title);
             };
         }
 
