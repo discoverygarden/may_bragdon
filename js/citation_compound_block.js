@@ -35,7 +35,7 @@
         }
 
     };
-    
+
     function setCiteInfo(response) {
         var title = "";
         var nameArray = "";
@@ -60,12 +60,13 @@
             createdDate = response.mods.Date[0];
             $('#apaStyle').html(lastName + ", " + firstName.substring(1, 2) + ". (" + createdDate.substring(0, 4) + "). <i>" + title + "</i>. Retrieved from " + retrivedFrom);
             $('mlaStyle').html(lastName + ", " + firstName.replace(/\s+/g, '') + ". <i>" + title + "</i>. University of Rochester. Web.  " + today + ".");
+            $('#chicagoStyle').html(lastName + ", " + firstName.replace(/\s+/g, '') + ", <i>" + title + "</i>. Rochester, NY: University of Rochester, 2016. " + retrivedFrom + ".");
         } else {
             //console.log("No page");
             $('#citation_page_number').html("Not Found");
         }
     }
-    
+
     //call the page load function after the first page load
     $(function() {
         if( $(".openseadragon-container").length){
@@ -74,10 +75,10 @@
             // update the border color of the naviator once it is added to the
             // page
             $('.openseadragon-container').on('DOMNodeInserted', function(e) {
-                $(".openseadragon-container").css("position", "absolute"); 
+                $(".openseadragon-container").css("position", "absolute");
                 if ($(e.target).is('.displayregion')) {
                    $(".displayregion").css("border", "2px solid rgb(95, 187, 255)");
-                }            
+                }
                 if ($(e.target).is('span')) {
                     $(".navigator").css("border", "");
                     $(".navigator").css("border-bottom", " 2px solid rgb(85, 85, 85)");
@@ -109,5 +110,3 @@
 
 
 })(jQuery);
-
-
