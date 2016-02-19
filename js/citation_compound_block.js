@@ -24,8 +24,7 @@
                     cache: false,
                     success: function(response) {
                         console.log(response);
-                        $title = respone.mods.Title[1];
-                        console.log($title);
+                        console.log(response.mods.Title[1]);
                         if(response.mods !== null && response.mods.Page !== null){
                             //console.log("we have a page");
                             $('#citation_page_number').html(response.mods.Page[0]);
@@ -42,7 +41,7 @@
         }
 
     };
-    
+
     //call the page load function after the first page load
     $(function() {
         if( $(".openseadragon-container").length){
