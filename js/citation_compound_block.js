@@ -102,6 +102,7 @@
                 },
                 error: function(response){
                     //console.log(response);
+                    $(".diary-page-cite").addClass("hidden");
                 }
             });
 
