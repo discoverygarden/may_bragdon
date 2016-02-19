@@ -27,7 +27,7 @@ var title = "none";
                     success: function(response) {
                         console.log(response);
                         if(response.mods !== null && response.mods.Page !== null){
-                            //console.log("we have a page");
+                            console.log("we have 10 page");
                             $('#citation_page_number').html(response.mods.Page[0]);
                             title = response.mods.Title[1];
                             console.log(title);
