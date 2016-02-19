@@ -42,7 +42,7 @@ var createdDate = "";
                             lastName = nameArray[0];
                             pageNum = response.mods.Page[0];
                             createdDate = response.mods.Date[0];
-                            $('#apaStyle').append(lastName + ", " + firstname.substring(0,1) + ". (" + createdDate.substring(0,4) + "). " + title + ". Retrieved from " + retrivedFrom);
+                            $('#apaStyle').append(lastName + ", " + firstName.substring(0,1) + ". (" + createdDate.substring(0,4) + "). " + title + ". Retrieved from " + retrivedFrom);
                         } else {
                             //console.log("No page");
                             $('#citation_page_number').html("Not Found");
