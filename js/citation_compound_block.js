@@ -1,4 +1,10 @@
-var title = "none";
+var title = "";
+var nameArray = "";
+var firstName = "";
+var lastName = "";
+var pageNum = "";
+var retrivedFrom = window.location.href;
+var createdDate = "";
 
 (function ($) {
 
@@ -27,10 +33,15 @@ var title = "none";
                     success: function(response) {
                         console.log(response);
                         if(response.mods !== null && response.mods.Page !== null){
-                            console.log("we have 10 page");
-                            $('#citation_page_number').html(response.mods.Page[0]);
+                            //console.log("we have 10 page");
+                            //$('#citation_page_number').html(response.mods.Page[0]);
                             title = response.mods.Title[1];
-                            console.log(title);
+                            nameArray = response.mods.Name[0];
+                            nameArray = string.split(',');
+                            console.log(nameArray);
+                            pageNum = response.mods.Page[0];
+                            createdDate = response.mods.Date[0];
+                            $('#apaStyle').append("Title: " + title);
                         } else {
                             //console.log("No page");
                             $('#citation_page_number').html("Not Found");
