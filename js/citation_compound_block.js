@@ -37,7 +37,7 @@ var createdDate = "";
                             //$('#citation_page_number').html(response.mods.Page[0]);
                             title = response.mods.Title[1];
                             nameArray = response.mods.Name[0];
-                            nameArray = string.split(',');
+                            nameArray.split(',');
                             console.log(nameArray);
                             pageNum = response.mods.Page[0];
                             createdDate = response.mods.Date[0];
