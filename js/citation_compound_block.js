@@ -71,7 +71,6 @@
     //call the page load function after the first page load
     $(function() {
         if( $(".openseadragon-container").length){
-            console.log("blah");
             $(".openseadragon-container").css("position", "absolute");
 
             $('#paged-tei-seadragon-viewer-tei').css("height", "");
