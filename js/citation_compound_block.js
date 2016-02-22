@@ -56,7 +56,7 @@
             pageNum = response.mods.Page[0];
             createdDate = response.mods.Date[0];
             $('#apaStyle').html(lastName + ", " + firstName.substring(1, 2) + ". (" + createdDate.substring(0, 4) + "). <i>" + title + "</i>. Retrieved from " + retrivedFrom);
-            $('mlaStyle').html(lastName + ", " + firstName.replace(/\s+/g, '') + ". <i>" + title + "</i>. University of Rochester. Web.  " + today + ".");
+            $('#mlaStyle').html(lastName + ", " + firstName.replace(/\s+/g, '') + ". <i>" + title + "</i>. University of Rochester. Web.  " + today + ".");
             $('#chicagoStyle').html(lastName + ", " + firstName.replace(/\s+/g, '') + ", <i>" + title + "</i>. Rochester, NY: University of Rochester, 2016. " + retrivedFrom + ".");
         } else {
             //console.log("No page");
@@ -75,7 +75,7 @@
             // update the border color of the naviator once it is added to the
             // page
             $('.openseadragon-container').on('DOMNodeInserted', function(e) {
-                $(".openseadragon-container").css("position", "absolute"); 
+                $(".openseadragon-container").css("position", "absolute");
                 if ($(e.target).is('.displayregion')) {
                    $(".displayregion").css("border", "2px solid rgb(95, 187, 255)");
                 }
