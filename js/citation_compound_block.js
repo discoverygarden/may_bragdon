@@ -100,7 +100,7 @@
                 url: Drupal.settings.basePath + "may_bragdon/mods/" + pid,
                 cache: false,
                 success: function(response) {
-                        console.log(response);
+                        //console.log(response);
                         setCiteInfo(response);
                 },
                 error: function(response){
