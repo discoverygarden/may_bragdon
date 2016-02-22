@@ -44,6 +44,10 @@
         var retrivedFrom = window.location.href;
         var createdDate = "";
         var today = new Date();
+        var date = today.getDate();
+        var month = today.getMonth();
+        var year = today.getFullYear();
+        var mlaMonthNames = ["Jan.", "Feb.", "Mar.", "Apr.", "May", "June", "July", "Aug.", "Sept.", "Oct.", "Nov.", "Dec."];
 
         if (response.mods !== null && response.mods.Page !== null) {
             //console.log("we have 10 page");
@@ -56,7 +60,7 @@
             pageNum = response.mods.Page[0];
             createdDate = response.mods.Date[0];
             $('#apaStyle').html(lastName + ", " + firstName.substring(1, 2) + ". (" + createdDate.substring(0, 4) + "). <i>" + title + "</i>. Retrieved from " + retrivedFrom);
-            $('#mlaStyle').html(lastName + ", " + firstName.replace(/\s+/g, '') + ". <i>" + title + "</i>. University of Rochester. Web.  " + today + ".");
+            $('#mlaStyle').html(lastName + ", " + firstName.replace(/\s+/g, '') + ". <i>" + title + "</i>. University of Rochester. Web.  " + mlaMonthNames[month] + " " + date + " " + year + ".");
             $('#chicagoStyle').html(lastName + ", " + firstName.replace(/\s+/g, '') + ", <i>" + title + "</i>. Rochester, NY: University of Rochester, 2016. " + retrivedFrom + ".");
         } else {
             //console.log("No page");
