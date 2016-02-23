@@ -224,7 +224,7 @@ function may_bragdon_theme_registry_alter(&$theme_registry) {
 
     $module_path = drupal_get_path('module', 'may_bragdon');
     if (isset($theme_registry['islandora_compound_prev_next'])) {
-
+        drupal_add_js(drupal_get_path('module', 'islandora_compound_object') . '/js/caption_width.js');
         $theme_registry['islandora_compound_prev_next']['theme path'] = $module_path . '/theme';
         $theme_registry['islandora_compound_prev_next']['template'] = $module_path . '/theme/may-bragdon-compound-prev-next';
         $theme_registry['islandora_compound_prev_next']['includes'][0] = $module_path . '/theme/theme.inc';
