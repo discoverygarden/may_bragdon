@@ -43,6 +43,7 @@ function may_bragdon_menu() {
  * @param type $javascript
  */
 function may_bragdon_js_alter(&$javascript) {
+    drupal_add_js(drupal_get_path('module', 'islandora_compound_object') . '/js/caption_width.js');
     drupal_add_js(drupal_get_path('module', 'may_bragdon') . '/js/citation_compound_block.js');
 }
 
@@ -221,7 +222,7 @@ function importFromXMLString($xml, $namespace) {
  * modify the theme registry to use the rochester template
  */
 function may_bragdon_theme_registry_alter(&$theme_registry) {
-    drupal_add_js(drupal_get_path('module', 'islandora_compound_object') . '/js/caption_width.js');
+    
     $module_path = drupal_get_path('module', 'may_bragdon');
     
     if (isset($theme_registry['islandora_compound_prev_next'])) {
