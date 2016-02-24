@@ -87,6 +87,13 @@
                     $(".navigator").css("border-bottom", " 2px solid rgb(85, 85, 85)");
                     $(".navigator").css("border-left", " 2px solid rgb(85, 85, 85)");
                 }
+                
+                if($('#inclusion-page').length){
+                    $(".openseadragon-container").css("height", "100vh");
+                    $(".openseadragon-container").css("top", "50px");
+                    $(".openseadragon-container").css("bottom", "0");
+                    $(".openseadragon-container").css("width", "85%");
+                }
 
             });
         }
