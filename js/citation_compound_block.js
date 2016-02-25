@@ -11,6 +11,9 @@
             var old_page_update = Drupal.settings.islandora_paged_tei_seadragon_update_page;
 
             Drupal.settings.islandora_paged_tei_seadragon_update_page = function (pid, page_number) {
+                
+                var contactTopPosition = $("#paged-tei-seadragon-viewer-tei").position().top;
+                $("#paged-tei-seadragon-viewer-tei").scrollTop(0);
                 // Drop out here if we are the most current request.
                 if (pid === Drupal.settings.islandora_paged_tei_seadragon.current_page) {
                     return;
@@ -98,6 +101,7 @@
             });
         }
 
+        //$("#tei-viewer-occluded").after('<div class="ajax-progress ajax-progress-throbber"><div class="loader">&nbsp;</div></div>');
 
         // update the page number on initial load
         if($("#islandora_paged_tei_seadragon_pager").length) {
