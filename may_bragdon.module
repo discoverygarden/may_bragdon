@@ -104,28 +104,7 @@ function may_bragdon_preprocess_islandora_large_image(&$variables) {
     }
 }
 
-/**
- * Returns the string value of the relationship data
- *
- * @param object $object - FedoraObject
- * @param value $value - relationship data to find
- *   
- *
- * @return string|bool
- *   Returns the value if found otherwise if there is no such membership, returns FALSE.
- */
-function getRelsData($object, $value) {
-    if (!empty($object)) {
-        $rels = $object->relationships->get(ISLANDORA_RELS_EXT_URI, $value);
-        $rel = reset($rels);
-        if ($rel) {
-            return $rel['object']['value'];
-        }
-        return FALSE;
-    }else{
-        return FALSE;
-    }
-}
+
 
 /**
  * Method to get the mods data if needed

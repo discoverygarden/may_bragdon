@@ -5,10 +5,12 @@
  */
 function may_bragdon_template_preprocess_islandora_compound_prev_next(array &$variables) { 
   
- 
+  module_load_include('inc', 'may_bragdon', 'includes/utilities');
   $themed_siblings = array();
   $image_path = drupal_get_path('module', 'islandora');
   $folder_image_path = "$image_path/images/folder.png";
+  
+  
 
   // If the parent hasModel islandora:compoundCModel,
   // the first child is typically identical to the parent;
@@ -20,12 +22,46 @@ function may_bragdon_template_preprocess_islandora_compound_prev_next(array &$va
 
   $variables['parent_tn'] = NULL;
   $parent_object = islandora_object_load($variables['parent_pid']);
+  
+  
+  $variables['page_number'] = getRelsData($parent_object, 'isPageNumber');
+  $variables['diary_id'] =  getRelsData($parent_object, 'isPageOf');
+  
   if ($parent_object && !in_array(ISLANDORA_COMPOUND_OBJECT_CMODEL, $parent_object->models)) {
     if (isset($parent_object['TN']) && islandora_datastream_access(ISLANDORA_VIEW_OBJECTS, $parent_object['TN'])) {
       $variables['parent_tn'] = 'islandora/object/' . $parent_object->id . '/datastream/TN/view';
     }
     else {
       $variables['parent_tn'] = $folder_image_path;
+    }
+  }
+  
+  $params = drupal_get_query_parameters();
+  
+  //see if an original view exists
+  $original_pid = may_bragdon_lookup_occluded_pid($parent_object);
+  
+  $variables['has_occluded_thumb'] = false;
+  
+  //do the oposite of what is shown - if un-occluded view is shown
+  //show occluded thumb - othwerwise show non-occluded thumb
+  $variables['show_occluded_thumb'] = true;
+  
+  if($original_pid){
+      $variables['has_occluded_thumb'] = true;
+      
+      if (isset($params['occluded']) && $params['occluded'] == 'true') {
+          $variables['show_occluded_thumb'] = false;
+      }
+      
+      $original_view = islandora_object_load($original_pid);
+      if ($original_view && !in_array(ISLANDORA_COMPOUND_OBJECT_CMODEL, $parent_object->models)) {
+        if (isset($original_view['TN']) && islandora_datastream_access(ISLANDORA_VIEW_OBJECTS, $original_view['TN'])) {
+        $variables['original_tn'] = 'islandora/object/' . $original_view->id . '/datastream/TN/view';
+      }
+      else {
+        $variables['original_tn'] = $folder_image_path;
+      }
     }
   }
 

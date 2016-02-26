@@ -21,14 +21,44 @@
 ?>
 <div class="islandora-compound-prev-next">
 
+    <div id="roch-tei-viewer-occluded" class="manuscript-view">
+            <?php if($show_occluded_thumb):?>
+                <?php if ($original_tn): ?>
+                    <?php
+                        print l( 
+                                theme_image(
+                                        array(
+                                            'path' => $original_tn,
+                                            'attributes' => array(),
+                                        )
+                                ), 'islandora/object/' . $diary_id , array('html' => TRUE, 
+                                    'query' => array('islandora_paged_content_page' => $page_number, 'occluded' => 'true'))
+                        );
+                ?>
+                <?php endif; ?>
+            <?php else:?>
+                <?php if($has_occluded_thumb && $parent_tn)
+                    print l( 
+                         theme_image(
+                            array(
+                                 'path' => $parent_tn,
+                                 'attributes' => array(),
+                            )
+                        ), 'islandora/object/' . $diary_id, array('html' => TRUE, 
+                            'query' => array('islandora_paged_content_page' => $page_number))
+                    );
+                ?>
+            <?php endif;?>
+    </div>
+
     <?php if (user_is_logged_in()): ?>
         <span class="islandora-compound-title"><?php print t('Part of: @parent (@count @objects)', 
                 array('@parent' => $parent_label, '@count' => $child_count, 
-                    '@objects' => format_plural($child_count, 'object', 'objects'))); ?>
+                    '@objects' => format_plural($child_count, 'object', 'objects'))); ?>            
             <?php if ($parent_url): ?>
                 <?php print l(t('manage parent'), $parent_url); ?>
             <?php endif; ?>
-            
+                       
         </span><br/>
 
         <?php if (!empty($previous_pid)): ?>

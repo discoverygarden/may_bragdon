@@ -73,6 +73,13 @@
 
     //call the page load function after the first page load
     $(function() {
+        
+        /*
+        var $occluded = $("#roch-tei-viewer-occluded");
+        $occluded.click(function() {
+            $occluded.after('<div class="ajax-progress ajax-progress-throbber"><div class="loader">&nbsp;</div></div>');
+        });*/
+        
         if( $(".openseadragon-container").length){
             $(".openseadragon-container").css("position", "absolute");
 
