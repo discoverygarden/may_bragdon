@@ -55,6 +55,7 @@ function may_bragdon_preprocess_islandora_large_image(&$variables) {
 
     module_load_include('inc', 'may_bragdon', 'theme/theme');
     module_load_include('inc', 'islandora', 'includes/utilities');
+    module_load_include('inc', 'may_bragdon', 'includes/utilities');
     $themed_siblings = array();
     $islandora_object = $variables['islandora_object'];
 

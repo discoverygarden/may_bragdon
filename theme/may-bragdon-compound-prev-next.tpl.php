@@ -20,7 +20,7 @@
  */
 ?>
 <div class="islandora-compound-prev-next">
-
+   
     <div id="roch-tei-viewer-occluded" class="manuscript-view">
             <?php if($show_occluded_thumb):?>
                 <?php if ($original_tn): ?>
@@ -50,7 +50,7 @@
                 ?>
             <?php endif;?>
     </div>
-
+   
     <?php if (user_is_logged_in()): ?>
         <span class="islandora-compound-title"><?php print t('Part of: @parent (@count @objects)', 
                 array('@parent' => $parent_label, '@count' => $child_count, 

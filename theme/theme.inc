@@ -21,6 +21,7 @@ function may_bragdon_template_preprocess_islandora_compound_prev_next(array &$va
   // show the parent TN.
 
   $variables['parent_tn'] = NULL;
+  $variables['original_tn'] = NULL;
   $parent_object = islandora_object_load($variables['parent_pid']);
   
   
