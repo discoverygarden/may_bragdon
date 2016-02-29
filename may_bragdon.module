@@ -199,6 +199,22 @@ function importFromXMLString($xml, $namespace) {
 }
 
 /**
+ * Determine if the user is viewing a book
+ * 
+ * @param boolean $variables
+ */
+function may_bragdon_preprocess_page(&$variables) {
+    
+    //if this is a book object show add basic data
+     $object = menu_get_object('islandora_object', 2);
+     if($object && in_array('islandora:bookCModel', $object->models)){
+         
+         $variables["is_book"] = true;
+         $variables["pid"] = $object->id;
+     }
+}
+
+/**
  * modify the theme registry to use the rochester template
  */
 function may_bragdon_theme_registry_alter(&$theme_registry) {

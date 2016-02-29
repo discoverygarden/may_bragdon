@@ -82,7 +82,7 @@
         
         if( $(".openseadragon-container").length){
             $(".openseadragon-container").css("position", "absolute");
-
+       
             $('#paged-tei-seadragon-viewer-tei').css("height", "");
 
             // update the border color of the naviator once it is added to the
