@@ -73,7 +73,8 @@
 
     //call the page load function after the first page load
     $(function() {
-        
+        $('.note').popover();
+
         /*
         var $occluded = $("#roch-tei-viewer-occluded");
         $occluded.click(function() {
