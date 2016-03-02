@@ -21,7 +21,7 @@
 
                  //run the original function
                 old_page_update(pid, page_number);
-
+                
                 // call out to get citation information
                 $.ajax({
                     url: Drupal.settings.basePath + "may_bragdon/mods/" + pid,
@@ -73,8 +73,7 @@
 
     //call the page load function after the first page load
     $(function() {
-        $('.note').popover();
-
+      
         /*
         var $occluded = $("#roch-tei-viewer-occluded");
         $occluded.click(function() {
