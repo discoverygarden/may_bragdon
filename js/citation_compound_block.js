@@ -82,13 +82,15 @@
         
         if( $(".openseadragon-container").length){
             $(".openseadragon-container").css("position", "absolute");
+            //fix so that navigator positions properly
+            $(".islandora-openseadragon").css("height", $(".openseadragon-container").height());
        
             $('#paged-tei-seadragon-viewer-tei').css("height", "");
 
             // update the border color of the naviator once it is added to the
             // page
             $('.openseadragon-container').on('DOMNodeInserted', function(e) {
-                $(".openseadragon-container").css("position", "absolute");
+                
                 if ($(e.target).is('.displayregion')) {
                    $(".displayregion").css("border", "2px solid rgb(95, 187, 255)");
                 }
