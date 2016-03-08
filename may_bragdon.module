@@ -8,13 +8,21 @@ function may_bragdon_menu() {
 
     //allow mods metadata to be loaded for the specified islandora object
     $items['may_bragdon/mods/%islandora_object'] = array(
-        'title' => 'Citation Block Callback',
+        'title' => 'Mods Callback',
         'access callback' => 'islandora_object_access_callback',
         'access arguments' => array(ISLANDORA_VIEW_OBJECTS, 2),
         'page callback' => 'may_bragdon_object_mods',
         'page arguments' => array(2),
         'file' => 'includes/callbacks.inc',
         'type' => MENU_NORMAL_ITEM,
+    );
+    
+    //allow mods metadata to be loaded for the specified islandora object
+    $items['may_bragdon/ography/%'] = array(
+        'access arguments' => array(),
+        'page callback' => 'may_bragdon_ography',
+        'page arguments' => array(2),
+        'file' => 'includes/callbacks.inc'
     );
 
     //the form will not be shown and instead will execute a search that
