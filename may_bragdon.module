@@ -248,7 +248,7 @@ function may_bragdon_theme_registry_alter(&$theme_registry) {
     if (isset($theme_registry['islandora_solr_metadata_display'])) {
         $theme_registry['islandora_solr_metadata_display']['template'] = $module_path . '/theme/islandora-solr-metadata-display';
     }
-    dpm($theme_registry);
+   
 }
 
 /**
