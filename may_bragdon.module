@@ -29,12 +29,12 @@ function may_bragdon_menu() {
     //returns all results.
     //
   //The submit button is hidden so it will not show up correctly in the
-    //may bragdon theme - add the following to make the form show up for 
+    //may bragdon theme - add the following to make the form show up for
     //other themes - and make sure the button is not hidden
     //
   //  'page arguments' => array('may_bragdon_simple_search_form'),
     //  'page callback' => 'drupal_get_form',
-    //  
+    //
     $items['may_bragdon_module/form'] = array(
         'title' => 'May Bragdon Simple Search',
         'page callback' => 'islandora_solr',
@@ -64,24 +64,24 @@ function may_bragdon_preprocess_islandora_large_image(&$variables) {
     module_load_include('inc', 'may_bragdon', 'theme/theme');
     module_load_include('inc', 'islandora', 'includes/utilities');
     module_load_include('inc', 'may_bragdon', 'includes/utilities');
-    
+
     $islandora_object = $variables['islandora_object'];
     $parent = may_bragdon_get_compound_parent($islandora_object);
-    
+
     $pageOf = getRelsData($parent, 'isPageOf');
     $pageNum = getRelsData($parent, 'isPageNumber');
     if($pageOf && $pageNum){
         $variables['page_number'] = $pageNum;
         $variables['page_of'] = $pageOf;
     }
-    
+
     $parts = islandora_object_load($parent->id);
-   
+
     // Need at least title, full name of at least one author, publication year.
     if (!isset($parts['MODS']) || !islandora_datastream_access(ISLANDORA_VIEW_OBJECTS, $parts['MODS'])) {
         return FALSE;
     } else {
-        
+
 
         $tags = array();
         $tags['citation_author'] = array();
@@ -96,7 +96,7 @@ function may_bragdon_preprocess_islandora_large_image(&$variables) {
 }
 
 function may_bragdon_get_compound_parent($islandora_object){
-   
+
     $compound_info = islandora_compound_object_retrieve_compound_info($islandora_object);
 
     // get to the top parent to find the page number
@@ -105,7 +105,7 @@ function may_bragdon_get_compound_parent($islandora_object){
     if (array_key_exists("parent_pid", $compound_info)) {
         $parent_pid = $compound_info["parent_pid"];
         while (!empty($parent_pid)) {
-            $parent = islandora_object_load($parent_pid);          
+            $parent = islandora_object_load($parent_pid);
             $compund_parent_info = islandora_compound_object_retrieve_compound_info($parent);
             if (array_key_exists("parent_pid", $compund_parent_info)) {
                 $parent_pid = $compund_parent_info["parent_pid"];
@@ -210,15 +210,15 @@ function importFromXMLString($xml, $namespace) {
 
 /**
  * Determine if the user is viewing a book
- * 
+ *
  * @param boolean $variables
  */
 function may_bragdon_preprocess_page(&$variables) {
-    
+
     //if this is a book object show add basic data
      $object = menu_get_object('islandora_object', 2);
      if($object && in_array('islandora:bookCModel', $object->models)){
-         
+
          $variables["is_book"] = true;
          $variables["pid"] = $object->id;
      }
@@ -228,11 +228,11 @@ function may_bragdon_preprocess_page(&$variables) {
  * modify the theme registry to use the rochester template
  */
 function may_bragdon_theme_registry_alter(&$theme_registry) {
-    
+
     $module_path = drupal_get_path('module', 'may_bragdon');
-    
+
     if (isset($theme_registry['islandora_compound_prev_next'])) {
-        
+
         $theme_registry['islandora_compound_prev_next']['theme path'] = $module_path . '/theme';
         $theme_registry['islandora_compound_prev_next']['template'] = $module_path . '/theme/may-bragdon-compound-prev-next';
         $theme_registry['islandora_compound_prev_next']['includes'][0] = $module_path . '/theme/theme.inc';
@@ -249,7 +249,7 @@ function may_bragdon_theme_registry_alter(&$theme_registry) {
  * Override the metadata display by adding the parent object for metadata -
  * this is for images that are part of a compound object and the mods file
  * is on the compound object
- * 
+ *
  * @param array $variables
  */
 function may_bragdon_preprocess_islandora_solr_metadata_display(array &$variables){
@@ -259,7 +259,7 @@ function may_bragdon_preprocess_islandora_solr_metadata_display(array &$variable
         if (array_key_exists("parent_pid", $compound_info)) {
             //get the first level up
             $parent_pid = $compound_info["parent_pid"];
-            $parent = islandora_object_load($parent_pid);  
+            $parent = islandora_object_load($parent_pid);
             //$compund_parent_info = islandora_compound_object_retrieve_compound_info($parent);
             $variables['islandora_object'] = $parent;
         }
@@ -296,7 +296,7 @@ function may_bragdon_simple_search_form($form, &$form_state) {
     $form['simple']['submit'] = array(
         '#type' => 'submit',
         '#value' => t('search'),
-        '#attributes' => array('class' => array('hidden'), 'aria-hidden' => array('true')),
+        '#attributes' => array('class' => array('hidden'), 'aria-hidden' => array('true'), 'id' => array('hidden-button')),
     );
 
     return $form;
