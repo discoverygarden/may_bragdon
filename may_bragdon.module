@@ -19,7 +19,7 @@ function may_bragdon_menu() {
     
     //allow mods metadata to be loaded for the specified islandora object
     $items['may_bragdon/ography/%'] = array(
-        'access arguments' => array(),
+        'access arguments' => array('access content'),
         'page callback' => 'may_bragdon_ography',
         'page arguments' => array(2),
         'file' => 'includes/callbacks.inc'
