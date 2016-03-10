@@ -22,7 +22,7 @@
   if (!(empty($solr_fields) && variable_get('islandora_solr_metadata_omit_empty_values', FALSE))):?>
   <div class="item-metadata">
       <?php foreach($solr_fields as $value): ?>
-          <div class="item-metadata-element">
+          <div class="item-metadata-element <?php print $value['solr_field'];?>">
               <div class="item-metadata-label"><?php print $value['display_label']; ?></div>
               <div class="item-metadata-value"><?php print check_markup(implode("\n", $value['value']), 'islandora_solr_metadata_filtered_html'); ?></div>
           </div>
