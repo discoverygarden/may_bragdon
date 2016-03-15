@@ -9,8 +9,6 @@ function may_bragdon_template_preprocess_islandora_compound_prev_next(array &$va
   $themed_siblings = array();
   $image_path = drupal_get_path('module', 'islandora');
   $folder_image_path = "$image_path/images/folder.png";
-  
-  
 
   // If the parent hasModel islandora:compoundCModel,
   // the first child is typically identical to the parent;
@@ -29,8 +27,8 @@ function may_bragdon_template_preprocess_islandora_compound_prev_next(array &$va
   $variables['diary_id'] =  getRelsData($parent_object, 'isPageOf');
   
   if ($parent_object && !in_array(ISLANDORA_COMPOUND_OBJECT_CMODEL, $parent_object->models)) {
-    if (isset($parent_object['TN']) && islandora_datastream_access(ISLANDORA_VIEW_OBJECTS, $parent_object['TN'])) {
-      $variables['parent_tn'] = 'islandora/object/' . $parent_object->id . '/datastream/TN/view';
+    if (isset($parent_object['JPG']) && islandora_datastream_access(ISLANDORA_VIEW_OBJECTS, $parent_object['JPG'])) {
+      $variables['parent_tn'] = 'islandora/object/' . $parent_object->id . '/datastream/JPG/view';
     }
     else {
       $variables['parent_tn'] = $folder_image_path;
@@ -57,8 +55,8 @@ function may_bragdon_template_preprocess_islandora_compound_prev_next(array &$va
       
       $original_view = islandora_object_load($original_pid);
       if ($original_view && !in_array(ISLANDORA_COMPOUND_OBJECT_CMODEL, $parent_object->models)) {
-        if (isset($original_view['TN']) && islandora_datastream_access(ISLANDORA_VIEW_OBJECTS, $original_view['TN'])) {
-        $variables['original_tn'] = 'islandora/object/' . $original_view->id . '/datastream/TN/view';
+        if (isset($original_view['JPG']) && islandora_datastream_access(ISLANDORA_VIEW_OBJECTS, $original_view['JPG'])) {
+        $variables['original_tn'] = 'islandora/object/' . $original_view->id . '/datastream/JPG/view';
       }
       else {
         $variables['original_tn'] = $folder_image_path;
@@ -113,13 +111,13 @@ function theme_rochdora_get_children($pid){
         $child_info['pid'] = $child_pid;
         $child_info['parent_pid'] = $pid;
 
-        if(isset($sibling_object['TN']) && 
-           islandora_datastream_access(ISLANDORA_VIEW_OBJECTS, $sibling_object['TN'])){
-               $child_info['TN'] = 'islandora/object/' . $child_pid . '/datastream/TN/view';
+        if(isset($sibling_object['JPG']) && 
+           islandora_datastream_access(ISLANDORA_VIEW_OBJECTS, $sibling_object['JPG'])){
+               $child_info['JPG'] = 'islandora/object/' . $child_pid . '/datastream/JPG/view';
         } else {
             // Object either does not have a thumbnail or it's restricted show a
             // default in its place.
-            $child_info['TN'] = $folder_image_path;
+            $child_info['JPG'] = $folder_image_path;
         }
        
         $child_info['label'] = $sibling_object->label;
