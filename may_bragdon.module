@@ -229,6 +229,7 @@ function may_bragdon_preprocess_page(&$variables) {
  */
 function may_bragdon_theme_registry_alter(&$theme_registry) {
 
+    
     $module_path = drupal_get_path('module', 'may_bragdon');
 
     if (isset($theme_registry['islandora_compound_prev_next'])) {
@@ -243,6 +244,11 @@ function may_bragdon_theme_registry_alter(&$theme_registry) {
         $theme_registry['islandora_large_image']['theme path'] = $module_path . '/theme';
         $theme_registry['islandora_large_image']['template'] = $module_path . '/theme/islandora-large-image';
     }
+    
+    if (isset($theme_registry['islandora_solr_metadata_display'])) {
+        $theme_registry['islandora_solr_metadata_display']['template'] = $module_path . '/theme/islandora-solr-metadata-display';
+    }
+   
 }
 
 /**

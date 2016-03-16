@@ -82,13 +82,13 @@
         
         if( $(".openseadragon-container").length){
             $(".openseadragon-container").css("position", "absolute");
-     
+            
             $('#paged-tei-seadragon-viewer-tei').css("height", "");
-
+            
             // update the border color of the naviator once it is added to the
             // page
             $('.openseadragon-container').on('DOMNodeInserted', function(e) {
-                
+                 
                 if ($(e.target).is('.displayregion')) {
                    $(".displayregion").css("border", "2px solid rgb(95, 187, 255)");
                 }
@@ -101,10 +101,10 @@
                 if($('#inclusion-page').length){
                     //$(".openseadragon-container").css("height", "100vh");
                     $(".openseadragon-container").css("top", "50px");
+                    $("[id^=navigator-] form").css("top", "0px");
                     $(".openseadragon-container").css("bottom", "0");
-                    $(".openseadragon-container").css("width", "85%");
+                    
                 }
-
             });
         }
 
