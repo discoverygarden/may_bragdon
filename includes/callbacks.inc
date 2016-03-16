@@ -32,13 +32,13 @@ function may_bragdon_ography($identifier) {
     $ographyLookUpID = null;
     $ographyPreFix = "";
     $ographyID = "";
-    
+
     $ographyLookUpID = explode(":", $identifier);
     $ographyPreFix = $ographyLookUpID[0];       // echo($ographyPreFix . "<br>");
     $ographyID = $ographyLookUpID[1];           // echo($ographyID . "<br>");
 
     $xmlDoc = new DOMDocument;
-    
+
     global $base_url;
     $site_path = $base_url . base_path();
 
@@ -75,18 +75,19 @@ function may_bragdon_ography($identifier) {
             $result = retrieveOgraphyRecord($ographySrc, $xpathPhrase, $xmlDoc);
             break;
     }
-    $data = $xmlDoc->saveXML($result->item(0));
-    
+    // $data = $xmlDoc->saveXML($result->item(0));
+
 
     /*
     return drupal_json_output(array(
         '$site_path' => $site_path,
         '$ographyPreFix' => $ographyPreFix,
-        '$ographySrc' => $ographySrc, 
-        '$xpathPhrase' => $xpathPhrase, 
+        '$ographySrc' => $ographySrc,
+        '$xpathPhrase' => $xpathPhrase,
         '$data' => $data,
         '$ographyLookUpID' => $ographyLookUpID));*/
-    print $data;
+    // print $data;
+    print $result;
 }
 
 function retrieveOgraphyRecord($ographySrc, $xpathPhrase, $xmlDoc) {
@@ -94,6 +95,13 @@ function retrieveOgraphyRecord($ographySrc, $xpathPhrase, $xmlDoc) {
     $xmlDoc->load($ographySrc);
     $xpath = new DOMXPath($xmlDoc);
     $xpath->registerNamespace('t', 'http://www.tei-c.org/ns/1.0');
-    $itemlist = $xpath->query($xpathPhrase);
-    return $itemlist;
+    // error checking for when there are no matches
+    $item = $xpath->query($xpathPhrase)->item(0);
+    if ($item != null){
+      $record = $item->getAttribute('xml:id') ? $xmlDoc->saveXML($item) : $xmlDoc->saveXML('');
+    } else {
+      $record = "Error Message here";
+    }
+    echo $record;
+
 }
