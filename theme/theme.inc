@@ -47,6 +47,7 @@ function may_bragdon_template_preprocess_islandora_compound_prev_next(array &$va
   $variables['show_occluded_thumb'] = true;
   
   if($original_pid){
+      
       $variables['has_occluded_thumb'] = true;
       
       if (isset($params['occluded']) && $params['occluded'] == 'true') {
