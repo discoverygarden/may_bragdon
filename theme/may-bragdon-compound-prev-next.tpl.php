@@ -73,7 +73,7 @@
                         print l(
                                     theme_image(
                                             array(
-                                                'path' => $child['TN'],
+                                                'path' => $child['JPG'],
                                                 'attributes' => array('class' => $child['class']),
                                             )
                                     ), 'islandora/object/' . $child['pid'], array('html' => TRUE)
