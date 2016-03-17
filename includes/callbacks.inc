@@ -98,8 +98,7 @@ function retrieveOgraphyRecord($ographySrc, $xpathPhrase, $xmlDoc) {
     // error checking for when there are no matches
     $item = $xpath->query($xpathPhrase)->item(0);
     if ($item != null){
-      // $record = $item->getAttribute('xml:id') ? $xmlDoc->saveXML($item) : $xmlDoc->saveXML('');
-      $record = $xmlDoc->saveXML($item);
+      $record = $item->getAttribute('xml:id') ? $xmlDoc->saveXML($item) : $xmlDoc->saveXML('');
     } else {
       $record = "Error Message here";
     }
