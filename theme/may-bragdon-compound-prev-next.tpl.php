@@ -34,6 +34,7 @@
                                 ), 'islandora/object/' . $diary_id , array('html' => TRUE, 
                                     'query' => array('islandora_paged_content_page' => $page_number, 'occluded' => 'true'))
                         );
+                        print('<div class="compund-title">Original</div>'); 
                 ?>
                 <?php endif; ?>
             <?php else:?>
@@ -47,6 +48,7 @@
                         ), 'islandora/object/' . $diary_id, array('html' => TRUE, 
                             'query' => array('islandora_paged_content_page' => $page_number))
                     );
+                    print('<div class="compund-title">Manuscript</div>'); 
                 ?>
             <?php endif;?>
     </div>
