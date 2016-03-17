@@ -102,6 +102,6 @@ function retrieveOgraphyRecord($ographySrc, $xpathPhrase, $xmlDoc) {
     } else {
       $record = "Error Message here";
     }
-    echo $record;
+    return $record;
 
 }
