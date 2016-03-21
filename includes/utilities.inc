@@ -12,21 +12,24 @@
  * @param AbstractObject $object
  *   The object for which to check for an occluded version.
  */
-function may_bragdon_lookup_occluded_pid(AbstractObject $object) {
+function may_bragdon_lookup_occluded_pid($objectId) {
   $qp = new IslandoraSolrQueryProcessor();
   $qp->buildQuery(format_string('!field:"!value"', array(
     '!field' => 'RELS_EXT_isPartOf_uri_ms',
-    '!value' => "info:fedora/{$object->id}",
+    '!value' => "info:fedora/{$objectId}",
   )));
   $qp->solrParams['fq'][] = format_string('!field:"!value"', array(
     '!field' => 'RELS_EXT_hasModel_uri_ms',
     '!value' => 'info:fedora/islandora:sp_large_image_cmodel',
   ));
   $qp->solrParams['fl'] = 'PID';
+  $qp->solrStart = 0;
   $qp->solrLimit = 1;
+  
   $qp->executeQuery();
 
   $results = $qp->islandoraSolrResult['response']['objects'];
+ 
   if (empty($results)) {
     return FALSE;
   }

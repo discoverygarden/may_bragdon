@@ -16,7 +16,7 @@ function may_bragdon_menu() {
         'file' => 'includes/callbacks.inc',
         'type' => MENU_NORMAL_ITEM,
     );
-    
+
     //allow mods metadata to be loaded for the specified islandora object
     $items['may_bragdon/ography/%'] = array(
         'access arguments' => array('access content'),
@@ -70,7 +70,7 @@ function may_bragdon_preprocess_islandora_large_image(&$variables) {
 
     $pageOf = getRelsData($parent, 'isPageOf');
     $pageNum = getRelsData($parent, 'isPageNumber');
-    if($pageOf && $pageNum){
+    if ($pageOf && $pageNum) {
         $variables['page_number'] = $pageNum;
         $variables['page_of'] = $pageOf;
     }
@@ -95,7 +95,7 @@ function may_bragdon_preprocess_islandora_large_image(&$variables) {
     }
 }
 
-function may_bragdon_get_compound_parent($islandora_object){
+function may_bragdon_get_compound_parent($islandora_object) {
 
     $compound_info = islandora_compound_object_retrieve_compound_info($islandora_object);
 
@@ -216,18 +216,19 @@ function importFromXMLString($xml, $namespace) {
 function may_bragdon_preprocess_page(&$variables) {
 
     //if this is a book object show add basic data
-     $object = menu_get_object('islandora_object', 2);
-     if($object && in_array('islandora:bookCModel', $object->models)){
+    $object = menu_get_object('islandora_object', 2);
+    if ($object && in_array('islandora:bookCModel', $object->models)) {
 
-         $variables["is_book"] = true;
-         $variables["pid"] = $object->id;
-     }
+        $variables["is_book"] = true;
+        $variables["pid"] = $object->id;
+    }
 }
 
 /**
  * modify the theme registry to use the rochester template
  */
 function may_bragdon_theme_registry_alter(&$theme_registry) {
+
 
     
     $module_path = drupal_get_path('module', 'may_bragdon');
@@ -244,11 +245,20 @@ function may_bragdon_theme_registry_alter(&$theme_registry) {
         $theme_registry['islandora_large_image']['theme path'] = $module_path . '/theme';
         $theme_registry['islandora_large_image']['template'] = $module_path . '/theme/islandora-large-image';
     }
-    
+
     if (isset($theme_registry['islandora_solr_metadata_display'])) {
         $theme_registry['islandora_solr_metadata_display']['template'] = $module_path . '/theme/islandora-solr-metadata-display';
     }
-   
+
+    //override the islandora objects method
+    if (isset($theme_registry['islandora_objects'])) {
+        $theme_registry['islandora_objects']['preprocess functions'][1] = 'may_bragdon_preprocess_islandora_objects';
+    }
+    
+    //override the gird listing
+    if (isset($theme_registry['islandora_objects_grid'])) {
+        $theme_registry['islandora_objects_grid']['template'] = $module_path . '/theme/islandora-objects-grid';
+    }
 }
 
 /**
@@ -258,10 +268,10 @@ function may_bragdon_theme_registry_alter(&$theme_registry) {
  *
  * @param array $variables
  */
-function may_bragdon_preprocess_islandora_solr_metadata_display(array &$variables){
+function may_bragdon_preprocess_islandora_solr_metadata_display(array &$variables) {
     $object = menu_get_object('islandora_object', 2);
     $compound_info = islandora_compound_object_retrieve_compound_info($object);
-    if($object && (in_array('islandora:sp_large_image_cmodel', $object->models))){
+    if ($object && (in_array('islandora:sp_large_image_cmodel', $object->models))) {
         if (array_key_exists("parent_pid", $compound_info)) {
             //get the first level up
             $parent_pid = $compound_info["parent_pid"];
@@ -270,6 +280,148 @@ function may_bragdon_preprocess_islandora_solr_metadata_display(array &$variable
             $variables['islandora_object'] = $parent;
         }
     }
+}
+
+/**
+ * Implements hook_preprocess_theme().
+ */
+function may_bragdon_preprocess_islandora_objects(array &$variables) {
+    
+    //ddebug_backtrace();
+  $display = (empty($_GET['display'])) ? 'grid' : $_GET['display'];
+  $grid_display = $display == 'grid';
+  $list_display = !$grid_display;
+  $query_params = drupal_get_query_parameters($_GET);
+  $variables['display_links'] = array(
+    array(
+      'title' => t('Grid view'),
+      'href' => current_path(),
+      'attributes' => array(
+        'class' => array(
+          $grid_display ? 'active' : '',
+        ),
+      ),
+      'query' => array('display' => 'grid') + $query_params,
+    ),
+    array(
+      'title' => t('List view'),
+      'href' => current_path(),
+      'attributes' => array(
+        'class' => array(
+          $list_display ? 'active' : '',
+        ),
+      ),
+      'query' => array('display' => 'list') + $query_params,
+    ),
+  );
+  // Pager.
+  $objects = $variables['objects'];
+  $limit = $variables['limit'];
+  $page = pager_default_initialize(count($objects), $limit);
+  $objects = array_slice($objects, $page * $limit, $limit);
+  $variables['pager'] = theme('pager', array('quantity' => 10));
+
+  //$objects = array_map('islandora_objects_object_mapper', $objects);
+  $objects = may_bragdon_get_islandora_objects($objects);
+  $theme = $grid_display ? 'islandora_objects_grid' : 'islandora_objects_list';
+  $variables['content'] = theme($theme, array('objects' => $objects));
+  $module_path = drupal_get_path('module', 'islandora');
+  drupal_add_css("$module_path/css/islandora.objects.css");
+}
+
+
+/**
+ * Override the object pages display to show original files and also
+ * use the original pid to go to the page that we want
+ */
+function may_bragdon_get_islandora_objects($objects) {
+    module_load_include('inc', 'may_bragdon', 'includes/utilities');
+
+    
+    $fullObjectData = array();
+    foreach ($objects as $objId) {
+
+        //get the manuscrip data
+        $manuscript = islandora_object_load($objId);
+
+        if ($manuscript) {
+            //get the occluded image
+            $img = getOccludedImage($objId);
+            $link_options = array('html' => TRUE, 'attributes' => array('title' => $manuscript->label));
+
+            $baseUrl = "islandora/object/{$objId}";
+            
+            //no occluded view
+            if ($img == null) {
+                $img = array(
+                    '#theme' => 'image',
+                    '#path' => ($manuscript && islandora_datastream_access(ISLANDORA_VIEW_OBJECTS, $manuscript['TN']) ?
+                            "$baseUrl/datastream/TN/view" :
+                            "$module_path/images/folder.png"),
+                    '#attributes' => array(),
+                );
+            }
+            $img = drupal_render($img);
+            $url = $baseUrl;
+
+            $query = array();
+            $diary_id = getRelsData($manuscript, 'isPageOf');
+            if ($diary_id) {
+                $url = "islandora/object/{$diary_id}";
+                $page_number = getRelsData($manuscript, 'isPageNumber');
+                if ($page_number) {
+                    $query = array('islandora_paged_content_page' => $page_number, 'occluded' => 'true');
+                }
+            }
+            
+
+            $description = NULL;
+            
+            if (isset($manuscript['DC']) && islandora_datastream_access(ISLANDORA_VIEW_OBJECTS, $manuscript['DC'])) {
+                $dc = DublinCore::importFromXMLString($manuscript['DC']->content);
+                if ($dc) {
+                    $dc = $dc->asArray();
+                    $description = $dc['dc:description']['value'];
+                }
+            }
+            
+            $link_options = array('html' => TRUE, 'query' => $query, 'attributes' => array('title' => $manuscript->label));
+
+            //append the data
+            $fullObjectData[] = array(
+                'label' => $manuscript->label,
+                'class' => drupal_strtolower(preg_replace('/[^A-Za-z0-9]/', '-', $manuscript->id)),
+                'link' => l($manuscript->label, $url, $link_options),
+                'thumb' => l($img, $url, $link_options),
+                'description' => $description,
+            );
+        }
+    }
+
+   
+    return $fullObjectData;
+}
+
+function getOccludedImage($objId) {
+    $occludedId = may_bragdon_lookup_occluded_pid($objId);
+    $img = null;
+    if ($occludedId) {
+
+        $occluded = islandora_object_load($occludedId);
+        if ($occluded) {
+            $url = "islandora/object/{$occludedId}";
+            $img = array(
+                '#theme' => 'image',
+                '#path' => ($occluded && islandora_datastream_access(ISLANDORA_VIEW_OBJECTS, $occluded['TN']) ?
+                        "$url/datastream/TN/view" :
+                        "$module_path/images/folder.png"),
+                '#attributes' => array(),
+            );
+         
+        }
+    }
+
+    return $img;
 }
 
 /**

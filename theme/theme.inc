@@ -38,7 +38,7 @@ function may_bragdon_template_preprocess_islandora_compound_prev_next(array &$va
   $params = drupal_get_query_parameters();
   
   //see if an original view exists
-  $original_pid = may_bragdon_lookup_occluded_pid($parent_object);
+  $original_pid = may_bragdon_lookup_occluded_pid($parent_object->id);
   
   $variables['has_occluded_thumb'] = false;
   
