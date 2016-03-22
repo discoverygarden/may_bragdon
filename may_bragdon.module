@@ -366,6 +366,7 @@ function may_bragdon_get_islandora_objects($objects) {
 
             $query = array();
             $diary_id = getRelsData($manuscript, 'isPageOf');
+            $page_number = NULL;
             if ($diary_id) {
                 $url = "islandora/object/{$diary_id}";
                 $page_number = getRelsData($manuscript, 'isPageNumber');
@@ -386,6 +387,17 @@ function may_bragdon_get_islandora_objects($objects) {
             }
             
             $link_options = array('html' => TRUE, 'query' => $query, 'attributes' => array('title' => $manuscript->label));
+            
+            $mods_data = get_data($manuscript);
+            $page =$page_number; // just in case there is no page number
+            if(array_key_exists('Page', $mods_data)){
+                if(array_key_exists(0, $mods_data['Page'])){
+                    $page = trim(str_replace("p.", "", $mods_data['Page'][0]));
+                }
+                
+            }
+            
+            
 
             //append the data
             $fullObjectData[] = array(
@@ -394,6 +406,7 @@ function may_bragdon_get_islandora_objects($objects) {
                 'link' => l($manuscript->label, $url, $link_options),
                 'thumb' => l($img, $url, $link_options),
                 'description' => $description,
+                'page' => $page,
             );
         }
     }

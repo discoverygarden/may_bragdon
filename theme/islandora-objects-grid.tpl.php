@@ -11,7 +11,8 @@
      <dl class="islandora-object <?php print $object['class']; ?>">
        <dt class="islandora-object-thumb"><?php print $object['thumb']; ?></dt>
        <dd class="islandora-object-caption"><?php print $object['link']; ?></dd>
-     </dl>
+       <dd><div class="page-number-prefix">p.</div><div class="diary-page-number"><?php print $object['page']; ?></div>  </dd>
+     </dl>     
    </div>
  <?php endforeach; ?>
     
