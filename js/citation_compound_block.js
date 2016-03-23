@@ -71,13 +71,20 @@
             firstName = nameArray[1];
             lastName = nameArray[0];
             pageNum = response.mods.Page[0];
-            createdDate = response.mods.Date[0];
+            if( response.mods.Date && response.mods.Date[0]){
+                createdDate = response.mods.Date[0];
+            }
+            
             $('#apaStyle').html(lastName + ", " + firstName.substring(1, 2) + ". (" + createdDate.substring(0, 4) + "). <i>" + title + "</i>. Retrieved from " + retrivedFrom);
             $('#mlaStyle').html(lastName + ", " + firstName.replace(/\s+/g, '') + ". <i>" + title + "</i>. University of Rochester. Web.  " + mlaMonthNames[month] + " " + date + " " + year + ".");
             $('#chicagoStyle').html(lastName + ", " + firstName.replace(/\s+/g, '') + ", <i>" + title + "</i>. Rochester, NY: University of Rochester, 2016. " + retrivedFrom + ".");
+            $(".diary-page-cite button").show();
         } else {
             //console.log("No page");
-            $('#citation_page_number').html("Not Found");
+            $('#apaStyle').html("Not Found");
+            $('#mlaStyle').html("Not Found");
+            $('#chicagoStyle').html("Not Found");
+            $(".diary-page-cite button").hide();
         }
     }
 
