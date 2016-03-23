@@ -11,7 +11,17 @@
             var old_page_update = Drupal.settings.islandora_paged_tei_seadragon_update_page;
 
             Drupal.settings.islandora_paged_tei_seadragon_update_page = function (pid, page_number) {
-                
+
+
+                //HACK - this will replace anything with a colon followed by a number 
+                // and replace it with the current pid
+                $('.tabs--primary.nav.nav-tabs li a').each(function (index, element) {
+                    if ($(element).text() != "Pages") {
+                        var value = $(element).attr("href");
+                        var match = value.match(/\w*%3A\d*[^\/]/g);
+                        $(element).attr("href", value.replace(match, encodeURIComponent(pid)));                        
+                    }
+                });
                 var contactTopPosition = $("#paged-tei-seadragon-viewer-tei").position().top;
                 $("#paged-tei-seadragon-viewer-tei").scrollTop(0);
                 // Drop out here if we are the most current request.
@@ -19,17 +29,17 @@
                     return;
                 }
 
-                 //run the original function
+                //run the original function
                 old_page_update(pid, page_number);
-                
+
                 // call out to get citation information
                 $.ajax({
                     url: Drupal.settings.basePath + "may_bragdon/mods/" + pid,
                     cache: false,
-                    success: function(response) {
+                    success: function (response) {
                         setCiteInfo(response);
                     },
-                    error: function(response){
+                    error: function (response) {
                         //console.log(response);
                     }
                 });
@@ -72,38 +82,51 @@
     }
 
     //call the page load function after the first page load
-    $(function() {
-      
+    $(function () {
+
         /*
-        var $occluded = $("#roch-tei-viewer-occluded");
-        $occluded.click(function() {
-            $occluded.after('<div class="ajax-progress ajax-progress-throbber"><div class="loader">&nbsp;</div></div>');
-        });*/
-        
-        if( $(".openseadragon-container").length){
+         var $occluded = $("#roch-tei-viewer-occluded");
+         $occluded.click(function() {
+         $occluded.after('<div class="ajax-progress ajax-progress-throbber"><div class="loader">&nbsp;</div></div>');
+         });*/
+
+        //HACK - this will replace anything with a colon followed by a number 
+        // and replace it with the current pid
+        $('.tabs--primary.nav.nav-tabs li a').each(function (index, element) {
+            if ($(element).text() != "Pages") {
+                var value = $(element).attr("href");
+                var match = value.match(/\w*%3A\d*[^\/]/g);
+                var currentPid = $("#islandora_paged_tei_seadragon_pager").val();
+                if (currentPid) {
+                    $(element).attr("href", value.replace(match, encodeURIComponent(currentPid)));
+                }
+            }
+        });
+
+        if ($(".openseadragon-container").length) {
             $(".openseadragon-container").css("position", "absolute");
-            
+
             $('#paged-tei-seadragon-viewer-tei').css("height", "");
-            
+
             // update the border color of the naviator once it is added to the
             // page
-            $('.openseadragon-container').on('DOMNodeInserted', function(e) {
-                 
+            $('.openseadragon-container').on('DOMNodeInserted', function (e) {
+
                 if ($(e.target).is('.displayregion')) {
-                   $(".displayregion").css("border", "2px solid rgb(95, 187, 255)");
+                    $(".displayregion").css("border", "2px solid rgb(95, 187, 255)");
                 }
                 if ($(e.target).is('span')) {
                     $(".navigator").css("border", "");
                     $(".navigator").css("border-bottom", " 2px solid rgb(85, 85, 85)");
                     $(".navigator").css("border-left", " 2px solid rgb(85, 85, 85)");
                 }
-                
-                if($('#inclusion-page').length){
+
+                if ($('#inclusion-page').length) {
                     //$(".openseadragon-container").css("height", "100vh");
                     $(".openseadragon-container").css("top", "50px");
                     $("[id^=navigator-] form").css("top", "0px");
                     $(".openseadragon-container").css("bottom", "0");
-                    
+
                 }
             });
         }
@@ -111,17 +134,17 @@
         //$("#tei-viewer-occluded").after('<div class="ajax-progress ajax-progress-throbber"><div class="loader">&nbsp;</div></div>');
 
         // update the page number on initial load
-        if($("#islandora_paged_tei_seadragon_pager").length) {
+        if ($("#islandora_paged_tei_seadragon_pager").length) {
 
             var pid = $("#islandora_paged_tei_seadragon_pager").val();
             $.ajax({
                 url: Drupal.settings.basePath + "may_bragdon/mods/" + pid,
                 cache: false,
-                success: function(response) {
-                        //console.log(response);
-                        setCiteInfo(response);
+                success: function (response) {
+                    //console.log(response);
+                    setCiteInfo(response);
                 },
-                error: function(response){
+                error: function (response) {
                     //console.log(response);
                     $(".diary-page-cite").addClass("hidden");
                 }
