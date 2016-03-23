@@ -336,7 +336,7 @@ function may_bragdon_preprocess_islandora_objects(array &$variables) {
  */
 function may_bragdon_get_islandora_objects($objects) {
     module_load_include('inc', 'may_bragdon', 'includes/utilities');
-
+    $islandora_module_path = drupal_get_path('module', 'islandora');
     
     $fullObjectData = array();
     foreach ($objects as $objId) {
@@ -355,9 +355,9 @@ function may_bragdon_get_islandora_objects($objects) {
             if ($img == null) {
                 $img = array(
                     '#theme' => 'image',
-                    '#path' => ($manuscript && islandora_datastream_access(ISLANDORA_VIEW_OBJECTS, $manuscript['TN']) ?
-                            "$baseUrl/datastream/TN/view" :
-                            "$module_path/images/folder.png"),
+                    '#path' => ($manuscript && islandora_datastream_access(ISLANDORA_VIEW_OBJECTS, $manuscript['JPG']) ?
+                            "$baseUrl/datastream/JPG/view" :
+                            "$islandora_module_path/images/folder.png"),
                     '#attributes' => array(),
                 );
             }
@@ -417,6 +417,7 @@ function may_bragdon_get_islandora_objects($objects) {
 
 function getOccludedImage($objId) {
     $occludedId = may_bragdon_lookup_occluded_pid($objId);
+    $islandora_module_path = drupal_get_path('module', 'islandora');
     $img = null;
     if ($occludedId) {
 
@@ -425,9 +426,9 @@ function getOccludedImage($objId) {
             $url = "islandora/object/{$occludedId}";
             $img = array(
                 '#theme' => 'image',
-                '#path' => ($occluded && islandora_datastream_access(ISLANDORA_VIEW_OBJECTS, $occluded['TN']) ?
-                        "$url/datastream/TN/view" :
-                        "$module_path/images/folder.png"),
+                '#path' => ($occluded && islandora_datastream_access(ISLANDORA_VIEW_OBJECTS, $occluded['JPG']) ?
+                        "$url/datastream/JPG/view" :
+                        "$islandora_module_path/images/folder.png"),
                 '#attributes' => array(),
             );
          
