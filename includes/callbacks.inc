@@ -100,7 +100,7 @@ function retrieveOgraphyRecord($ographySrc, $xpathPhrase, $xmlDoc) {
     if ($item != null){
       $record = $item->getAttribute('xml:id') ? $xmlDoc->saveXML($item) : $xmlDoc->saveXML('');
     } else {
-      $record = "Error Message here";
+      $record = "Error Message here test";
     }
     return $record;
 
