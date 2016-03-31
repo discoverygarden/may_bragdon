@@ -91,15 +91,18 @@ function may_bragdon_ography($identifier) {
 }
 
 function retrieveOgraphyRecord($ographySrc, $xpathPhrase, $xmlDoc) {
+
     //$xml = new SimpleXMLElement(file_get_contents());
     $xmlDoc->load($ographySrc);
     $xpath = new DOMXPath($xmlDoc);
     $xpath->registerNamespace('t', 'http://www.tei-c.org/ns/1.0');
+
     // error checking for when there are no matches
+    $item = "default";
     $item = $xpath->query($xpathPhrase)->item(0);
-    if ($item != null){
+    if ($item != null && $item != "default"){
       $record = $item->getAttribute('xml:id') ? $xmlDoc->saveXML($item) : $xmlDoc->saveXML('');
-    } else {
+    } elseif ($item != "default") {
       $record = "Sorry, no information found.  This error has been reported.";
 
       drupal_mail('example', 'Error Reporting', 'atraub@library.rochester.edu', language_default());
