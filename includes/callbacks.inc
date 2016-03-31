@@ -103,7 +103,7 @@ function retrieveOgraphyRecord($ographySrc, $xpathPhrase, $xmlDoc) {
     if ($item != null && $item != "default"){
       $record = $item->getAttribute('xml:id') ? $xmlDoc->saveXML($item) : $xmlDoc->saveXML('');
     } elseif ($item != "default") {
-      $record = "Sorry, no information found.  This error has been reported.";
+      $record = "No information found.  This error has been reported.";
     }
     return $record;
 
