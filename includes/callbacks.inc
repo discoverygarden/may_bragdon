@@ -100,7 +100,10 @@ function retrieveOgraphyRecord($ographySrc, $xpathPhrase, $xmlDoc) {
     if ($item != null){
       $record = $item->getAttribute('xml:id') ? $xmlDoc->saveXML($item) : $xmlDoc->saveXML('');
     } else {
-      $record = "Error Message here";
+      $record = "Sorry, no information found.  This error has been reported.";
+      $errorLink = "http://$_SERVER[HTTP_HOST]$_SERVER[REQUEST_URI]";
+      $errorMessage = "Error reported from: " + $errorLink = "\rID in error:  " + $item;
+      mail('atraub@library.rochester.edu', "May Bragdon ID Error Report", $errorMessage);
     }
     return $record;
 
