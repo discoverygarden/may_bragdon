@@ -101,7 +101,35 @@ function retrieveOgraphyRecord($ographySrc, $xpathPhrase, $xmlDoc) {
       $record = $item->getAttribute('xml:id') ? $xmlDoc->saveXML($item) : $xmlDoc->saveXML('');
     } else {
       $record = "Sorry, no information found.  This error has been reported.";
+
+      $params = array(
+        'subject' => "May Bragdon Ography Error",
+        'body' => "There was an error!",
+      );
+
+      drupal_mail('may_bragdon', 'may_bragdon_mail', "atraub@library.rochester.edu", language_default(), $params);
+      drupal_set_message("Error has been reported.");
     }
     return $record;
+
+}
+
+/**
+ * Implementation of hook_mail().
+ */
+function ographyErrorMail($key, &$message, $params){
+
+  // Set the mail content type to html to send an html e-mail (optional).
+  $message['headers']['Content-Type'] = 'text/html; charset=UTF-8; format=flowed';
+
+  // Grab the subject and body from params and add it to the message.
+  $message['subject'] = $params['subject'];
+  $message['body'][] = $params['body'];
+
+  switch ($key) {
+    case "may_bragdon_mail":
+      // Make other changes here if desired...
+      break;
+  }
 
 }
