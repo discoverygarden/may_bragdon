@@ -105,29 +105,9 @@ function retrieveOgraphyRecord($ographySrc, $xpathPhrase, $xmlDoc) {
     } elseif ($item != "default") {
       $record = "Sorry, no information found.  This error has been reported.";
 
-      drupal_mail('example', 'Error Reporting', 'atraub@library.rochester.edu', language_default());
-
+      $errorMessage = "Something is broken!";
+      mail('atraub@library.rochester.edu', "May Bragdon Error", $message);
     }
     return $record;
-
-}
-
-/**
- * Implementation of hook_mail().
- */
-function ographyErrorMail($key, &$message, $params){
-
-  // Set the mail content type to html to send an html e-mail (optional).
-  $message['headers']['Content-Type'] = 'text/html; charset=UTF-8; format=flowed';
-
-  // Grab the subject and body from params and add it to the message.
-  $message['subject'] = $params['subject'];
-  $message['body'][] = $params['body'];
-
-  switch ($key) {
-    case "may_bragdon_mail":
-      // Make other changes here if desired...
-      break;
-  }
 
 }
