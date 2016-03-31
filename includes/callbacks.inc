@@ -102,13 +102,8 @@ function retrieveOgraphyRecord($ographySrc, $xpathPhrase, $xmlDoc) {
     } else {
       $record = "Sorry, no information found.  This error has been reported.";
 
-      $params = array(
-        'subject' => "May Bragdon Ography Error",
-        'body' => "There was an error!",
-      );
+      drupal_mail('example', 'Error Reporting', 'atraub@library.rochester.edu', language_default());
 
-      drupal_mail('may_bragdon', 'may_bragdon_mail', "atraub@library.rochester.edu", language_default(), $params);
-      drupal_set_message("Error has been reported.");
     }
     return $record;
 
