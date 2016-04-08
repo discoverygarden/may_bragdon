@@ -316,10 +316,10 @@ function may_bragdon_preprocess_islandora_objects(array &$variables) {
   );
   // Pager.
   $objects = $variables['objects'];
-  $limit = $variables['limit'] = 25;
+  $limit = $variables['limit'] = 50;
   $page = pager_default_initialize(count($objects), $limit);
   $objects = array_slice($objects, $page * $limit, $limit);
-  $variables['pager'] = theme('pager', array('quantity' => 25));
+  $variables['pager'] = theme('pager', array('quantity' => 50));
 
   //$objects = array_map('islandora_objects_object_mapper', $objects);
   $objects = may_bragdon_get_islandora_objects($objects);
