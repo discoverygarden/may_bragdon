@@ -26,6 +26,28 @@ function may_bragdon_object_mods(AbstractObject $object) {
 /**
  * Menu callback for returning mods data.
  */
+function may_bragdon_feedback() {
+    $email = $_POST["email"];
+    $content = $_POST["content"];
+    $location = $_POST["location"];
+    $unused = $_POST["unused"];
+
+    if ((!empty($content)) && empty($unused) && filter_var($email, FILTER_VALIDATE_EMAIL)) {
+        $to = "";
+        $email_subject = "May bragdon feedback";
+        $email_body = $content . " \n\n sent from page: " . $location;
+        $headers = "From: $email\n";
+        $headers .= "Reply-To: $email";
+        mail($to, $email_subject, $email_body, $headers);
+    }
+
+
+    return drupal_json_output(array('email' => $email, 'content' => content, 'location' => $location));
+}
+
+/**
+ * Menu callback for returning mods data.
+ */
 function may_bragdon_ography($identifier) {
     $ographySrc = "";
     $result = null;

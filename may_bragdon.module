@@ -24,6 +24,14 @@ function may_bragdon_menu() {
         'page arguments' => array(2),
         'file' => 'includes/callbacks.inc'
     );
+    
+    //send emails
+    $items['may_bragdon/send-feedback'] = array(
+        'access arguments' => array('access content'),
+        'page callback' => 'may_bragdon_feedback',
+        'file' => 'includes/callbacks.inc'
+    );
+
 
     //the form will not be shown and instead will execute a search that
     //returns all results.
