@@ -284,9 +284,12 @@ function may_bragdon_preprocess_islandora_solr_metadata_display(array &$variable
             //get the first level up
             $parent_pid = $compound_info["parent_pid"];
             $parent = islandora_object_load($parent_pid);
-            //$compund_parent_info = islandora_compound_object_retrieve_compound_info($parent);
             $variables['islandora_object'] = $parent;
         }
+    } else {
+        //came in at the parent already use it's data
+        $parent_pid = $object->id;
+        $variables['islandora_object'] = $object;
     }
 }
 
