@@ -129,4 +129,53 @@ function theme_rochdora_get_children($pid){
     
 }
 
+/**
+ * Prepares variables for islandora_solr_wrapper templates.
+ *
+ * Default template: theme/islandora-solr-wrapper.tpl.php.
+ *
+ * @global string $base_url
+ *
+ * @param array $variables
+ *   An associative array containing:
+ *   - results: Rendered primary display
+ *   - secondary_profiles: (optional) Rendered list of secondary display
+ *     profiles
+ *   - elements: additional elements to populate the results page
+ *     - pager: (optional) Rendered pager
+ *     - solr_total: (optional) Total amount of documents found.
+ *     - solr_start: (optional) Solr start position
+ *     - solr_end: (optional) Solr end position
+ *
+ * @see islandora_solr_theme()
+ * @see IslandoraSolrResults::displayResults()
+ */
+function may_bragdon_preprocess_may_bragdon_solr_wrapper(&$variables) {
+  global $base_url;
+  $variables['base_url'] = $base_url;
+
+  $elements = $variables['elements'];
+
+  // Make all variables in 'elements' available as variables in the template
+  // file.
+  foreach ($variables['elements'] as $key => $value) {
+    $variables[$key] = $value;
+  }
+
+  // Results count.
+  $total = $elements['solr_total'];
+  $end = $elements['solr_end'];
+  $start = $elements['solr_start'] + ($total > 0 ? 1 : 0);
+
+  // Format numbers.
+  $total = number_format($total, 0, '.', ',');
+  $end = number_format($end, 0, '.', ',');
+  $start = number_format($start, 0, '.', ',');
+
+  $variables['islandora_solr_result_count'] = t('(@start - @end of @total)', array(
+    '@start' => $start,
+    '@end' => $end,
+    '@total' => $total,
+  ));
+}
 
