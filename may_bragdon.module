@@ -119,6 +119,7 @@ function may_bragdon_preprocess_islandora_large_image(&$variables) {
     }
 
     $parts = islandora_object_load($parent->id);
+    $variables['pid'] = $islandora_object->id;
 
     // Need at least title, full name of at least one author, publication year.
     if (!isset($parts['MODS']) || !islandora_datastream_access(ISLANDORA_VIEW_OBJECTS, $parts['MODS'])) {
