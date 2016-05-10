@@ -125,7 +125,7 @@ function retrieveOgraphyRecord($ographySrc, $xpathPhrase, $xmlDoc) {
     if ($item != null && $item != "default"){
       $record = $item->getAttribute('xml:id') ? $xmlDoc->saveXML($item) : $xmlDoc->saveXML('');
     } elseif ($item != "default") {
-      $record = "We don't know much about this; more research is required.";
+      $record = "Research is ongoing. Please check back soon.";
     }
     return $record;
 
