@@ -19,8 +19,12 @@
  */
 ?>
 <?php if ($found):
-  if (!(empty($solr_fields) && variable_get('islandora_solr_metadata_omit_empty_values', FALSE))):?>
+  if(!empty($abstract)):?>
+        <?php print $abstract ?>
+  <?php elseif (!(empty($solr_fields) && variable_get('islandora_solr_metadata_omit_empty_values', FALSE))):?>
   <div class="item-metadata">
+      
+      
       <?php foreach($solr_fields as $value): ?>
           <div class="item-metadata-element <?php print $value['solr_field'];?>">
               <div class="item-metadata-label"><?php print $value['display_label']; ?></div>

@@ -33,7 +33,7 @@ function may_bragdon_feedback() {
     $unused = $_POST["unused"];
 
     if ((!empty($content)) && empty($unused) && filter_var($email, FILTER_VALIDATE_EMAIL)) {
-        $to = "";
+        $to = "mbragdon@library.rochester.edu";
         $email_subject = "May bragdon feedback";
         $email_body = $content . " \n\n sent from page: " . $location;
         $headers = "From: $email\n";
@@ -129,4 +129,71 @@ function retrieveOgraphyRecord($ographySrc, $xpathPhrase, $xmlDoc) {
     }
     return $record;
 
+}
+
+/**
+ * Get the file name stored in the tei
+ * 
+ * @param type $object
+ * @return type
+ */
+function getFigureInfo($object){
+    
+    $figure_file_name = null;
+    if(isset($object["MODS"])){
+        $xml = simplexml_load_string($object["MODS"]->content);
+        $xml->registerXPathNamespace('mods', 'http://www.loc.gov/mods/v3');
+        
+        $image_identifiers = $xml->xpath('(/mods:mods/mods:identifier[@type="fileName"])');
+       
+        $pattern = "/\.jpg$/";
+        foreach($image_identifiers as $identifier ){
+            $fileName = (string)$identifier;
+            if(preg_match($pattern, $fileName)){
+               $figure_file_name = $fileName;
+            }
+        }      
+    }
+    return $figure_file_name;
+}
+
+function getTeiFigures($object, $file_name) {
+    if (isset($object["TEI"])) {
+        $xml = simplexml_load_string($object["TEI"]->content);
+        $xml->registerXPathNamespace('tei', 'http://www.tei-c.org/ns/1.0');
+        $image_figures = $xml->xpath('(/tei:TEI/tei:teiHeader/tei:fileDesc/tei:sourceDesc/tei:msDesc/tei:physDesc/tei:additions/tei:figure[tei:graphic[@url="' . $file_name . '"]])');
+
+        if (count($image_figures) > 0) {
+            $node = $image_figures[0];
+            $path = drupal_get_path('module', 'may_bragdon') . '/tei_transforms';
+            $style = file_create_url("$path/tei2html.xslt");
+            $islandora_url = variable_get('islandora_base_url', 'http://localhost:8080/fedora');
+            $tomcat_url = str_replace('/fedora', '', $islandora_url);
+            $tempfile_object = file_save_data($node->asXML(), file_default_scheme() . '://');
+            $source = file_create_url($tempfile_object->uri);
+            $saxon_url = url("$tomcat_url/saxon/SaxonServlet", array(
+                'absolute' => TRUE,
+                'external' => TRUE,
+                'query' => array(
+                    'style' => $style,
+                    'source' => $source,
+                    'clear-stylesheet-cache' => 'yes',
+                    'css_base' => file_create_url($path),
+                ),
+            ));
+
+            $result = drupal_http_request($saxon_url);
+            file_delete($tempfile_object);
+            if (isset($result->error)) {
+                $markup = "$saxon_url $result->error";
+            } else {
+
+                // don't show errors
+                libxml_use_internal_errors(true);
+                
+                $markup = $result->data;
+            }
+        }
+    }
+    return $markup;
 }
