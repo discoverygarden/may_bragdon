@@ -18,6 +18,7 @@
  * @see template_process_islandora_solr_metadata_display()
  */
 ?>
+
 <?php if ($found):
   if(!empty($abstract)):?>
         <?php print $abstract ?>

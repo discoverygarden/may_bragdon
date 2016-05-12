@@ -338,6 +338,7 @@ function may_bragdon_preprocess_islandora_solr_metadata_display(array &$variable
     }
 }
 
+
 /**
  * Implements hook_preprocess_theme().
  */
