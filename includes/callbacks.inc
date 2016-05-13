@@ -158,6 +158,7 @@ function getFigureInfo($object){
 }
 
 function getTeiFigures($object, $file_name) {
+    $markup = null;
     if (isset($object["TEI"])) {
         $xml = simplexml_load_string($object["TEI"]->content);
         $xml->registerXPathNamespace('tei', 'http://www.tei-c.org/ns/1.0');

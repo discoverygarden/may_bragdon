@@ -22,9 +22,6 @@
   </xsl:template>
 
 
-  <xsl:template match="lb" mode="#all">
-    <span class="line-break"/>
-  </xsl:template>
 
   <xsl:template match="pb" mode="#all">
     <br class="pb"/>
@@ -40,11 +37,7 @@
   <xsl:template match="unclear | illegible" mode="#all">
     <xsl:apply-templates/>
     <div class="note">
-      <xsl:attribute name="data-content">
-        <xsl:value-of select="local-name()"/>
-      </xsl:attribute>
-      <xsl:attribute name="title">Editorial Note</xsl:attribute>
-      <i class="fa fa-sticky-note-o"/>
+      Editorial Note <xsl:value-of select="local-name()"/>: <xsl:value-of select="current()"/>
     </div>
   </xsl:template>
 
@@ -69,12 +62,7 @@
       </xsl:choose>
       <xsl:apply-templates/>
     </a>
-    <!-- <xsl:when test="*/tei:note">
-        <xsl:copy>
-          <xsl:apply-templates/>
-        </xsl:copy>
-      </xsl:when>
-      <xsl:otherwise> </xsl:otherwise> -->
+    
   </xsl:template>
 
 
@@ -196,11 +184,7 @@
 
   <xsl:template match="note[not(@place = 'footnote')]" mode="#all">
     <div class="note">
-      <xsl:attribute name="data-content">
-        <xsl:apply-templates mode="note"/>
-      </xsl:attribute>
-      <xsl:attribute name="title">Editorial Note</xsl:attribute>
-      <i class="fa fa-sticky-note-o"/>
+      Editorial Note: <xsl:value-of select="current()"/>
     </div>
   </xsl:template>
 
