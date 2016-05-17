@@ -184,7 +184,7 @@
 
   <xsl:template match="note[not(@place = 'footnote')]" mode="#all">
     <div class="note">
-      Editorial Note: <xsl:value-of select="current()"/>
+      Editorial Note:<xsl:apply-templates mode="note"/>
     </div>
   </xsl:template>
 
