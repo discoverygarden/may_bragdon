@@ -40,7 +40,7 @@
           </div>     
       <?php endif; ?>
       <div class="paged-tei-seadragon-viewer-download-datastream-JP2 large-image">
-        <?php  print l( 'JP2', 'islandora/object/' . $pid .'/datastream/JP2/download'); ?>
+        <?php  print l( 'Download', 'islandora/object/' . $pid .'/datastream/JP2/download'); ?>
       </div>
     <?php endif; ?>
   </div>
