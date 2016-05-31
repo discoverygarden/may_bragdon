@@ -118,6 +118,11 @@ function may_bragdon_preprocess_islandora_large_image(&$variables) {
         $variables['page_of'] = $pageOf;
     }
 
+    $showOcculded = (empty($_GET['occluded'])) ? 'false' : $_GET['occluded'];
+    $readerView = (empty($_GET['readerView'])) ? 'false' : $_GET['readerView'];
+  
+    $variables['show_occulded'] = $showOcculded;
+    $variables['reader_view'] = $readerView;
     $parts = islandora_object_load($parent->id);
     $variables['pid'] = $islandora_object->id;
 

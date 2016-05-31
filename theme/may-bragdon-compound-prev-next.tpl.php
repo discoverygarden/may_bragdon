@@ -78,7 +78,8 @@
                                                 'path' => $child['JPG'],
                                                 'attributes' => array('class' => $child['class']),
                                             )
-                                    ), 'islandora/object/' . $child['pid'], array('html' => TRUE)
+                                    ), 'islandora/object/' . $child['pid'], array('html' => TRUE, 
+                                        'query' => array('occluded' => $show_occulded, 'readerView' => $reader_view))
                         );
                         ?>
                     </div>

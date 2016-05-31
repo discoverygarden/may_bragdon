@@ -10,6 +10,12 @@ function may_bragdon_template_preprocess_islandora_compound_prev_next(array &$va
   $image_path = drupal_get_path('module', 'islandora');
   $folder_image_path = "$image_path/images/folder.png";
 
+  $showOcculded = (empty($_GET['occluded'])) ? 'false' : $_GET['occluded'];
+  $readerView = (empty($_GET['readerView'])) ? 'false' : $_GET['readerView'];
+  
+  $variables['show_occulded'] = $showOcculded;
+  $variables['reader_view'] = $readerView;
+  
   // If the parent hasModel islandora:compoundCModel,
   // the first child is typically identical to the parent;
   // do not show the parent TN.

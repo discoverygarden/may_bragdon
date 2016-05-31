@@ -35,7 +35,9 @@
       <?php if(!empty($page_of) && !empty($page_number)): ?>
           <div class="back-to-diary">
           <?php 
-             print l( 'Back to Diary', 'islandora/object/' . $page_of ,  array('query' => array('islandora_paged_content_page' => $page_number)));
+             print l( 'Back to Diary', 'islandora/object/' . $page_of ,  array('query' => array('islandora_paged_content_page' => $page_number,
+                 'occluded' => $show_occulded, 
+                 'readerView' => $reader_view)));
           ?>
           </div>     
       <?php endif; ?>
