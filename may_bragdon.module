@@ -541,9 +541,10 @@ function may_bragdon_simple_search_form($form, &$form_state) {
 
 function may_bragdon_simple_search_form_submit($form, &$form_state) {
     module_load_include('inc', 'islandora_solr', 'includes/utilities');
+    
     $search_string = islandora_solr_replace_slashes($form_state['values']['islandora_simple_search_query']);
 
-    $query = array('type' => 'edismax', 'display' => 'may_bragdon');
+    $query = array('type' => 'edismax', 'hidden_filter' => array('mods_titleInfo_title_s:[* TO *]'), 'display' => 'may_bragdon');
 
     $form_state['redirect'] = array(
         ISLANDORA_SOLR_SEARCH_PATH . "/$search_string",
