@@ -24,7 +24,7 @@ function may_bragdon_menu() {
         'page arguments' => array(2),
         'file' => 'includes/callbacks.inc'
     );
-    
+
     //send emails
     $items['may_bragdon/send-feedback'] = array(
         'access arguments' => array('access content'),
@@ -120,7 +120,7 @@ function may_bragdon_preprocess_islandora_large_image(&$variables) {
 
     $showOcculded = (empty($_GET['occluded'])) ? 'false' : $_GET['occluded'];
     $readerView = (empty($_GET['readerView'])) ? 'false' : $_GET['readerView'];
-  
+
     $variables['show_occulded'] = $showOcculded;
     $variables['reader_view'] = $readerView;
     $parts = islandora_object_load($parent->id);
@@ -299,7 +299,7 @@ function may_bragdon_theme_registry_alter(&$theme_registry) {
     if (isset($theme_registry['islandora_objects'])) {
         $theme_registry['islandora_objects']['preprocess functions'][1] = 'may_bragdon_preprocess_islandora_objects';
     }
-    
+
     //override the gird listing
     if (isset($theme_registry['islandora_objects_grid'])) {
         $theme_registry['islandora_objects_grid']['template'] = $module_path . '/theme/islandora-objects-grid';
@@ -330,15 +330,15 @@ function may_bragdon_preprocess_islandora_solr_metadata_display(array &$variable
         $parent_pid = $object->id;
         $variables['islandora_object'] = $object;
     }
-    
+
     //get parent with TEI
     $page_object = islandora_compound_object_retrieve_compound_info($parent);
-    
+
     if( isset($page_object) && isset($page_object["parent_pid"])){
         $tei_parent_pid = $page_object["parent_pid"];
         $tei_parent = islandora_object_load($tei_parent_pid);
     }
-    
+
     if(isset($tei_parent)){
         $file_name = getFigureInfo($parent);
         $abstractInfo = getTeiFigures($tei_parent, $file_name);
@@ -351,7 +351,7 @@ function may_bragdon_preprocess_islandora_solr_metadata_display(array &$variable
  * Implements hook_preprocess_theme().
  */
 function may_bragdon_preprocess_islandora_objects(array &$variables) {
-    
+
     //ddebug_backtrace();
   $display = (empty($_GET['display'])) ? 'grid' : $_GET['display'];
   $grid_display = $display == 'grid';
@@ -402,7 +402,7 @@ function may_bragdon_preprocess_islandora_objects(array &$variables) {
 function may_bragdon_get_islandora_objects($objects) {
     module_load_include('inc', 'may_bragdon', 'includes/utilities');
     $islandora_module_path = drupal_get_path('module', 'islandora');
-    
+
     $fullObjectData = array();
     foreach ($objects as $objId) {
 
@@ -415,7 +415,7 @@ function may_bragdon_get_islandora_objects($objects) {
             $link_options = array('html' => TRUE, 'attributes' => array('title' => $manuscript->label));
 
             $baseUrl = "islandora/object/{$objId}";
-            
+
             //no occluded view
             if ($img == null) {
                 $img = array(
@@ -439,10 +439,10 @@ function may_bragdon_get_islandora_objects($objects) {
                     $query = array('islandora_paged_content_page' => $page_number, 'occluded' => 'true');
                 }
             }
-            
+
 
             $description = NULL;
-            
+
             if (isset($manuscript['DC']) && islandora_datastream_access(ISLANDORA_VIEW_OBJECTS, $manuscript['DC'])) {
                 $dc = DublinCore::importFromXMLString($manuscript['DC']->content);
                 if ($dc) {
@@ -450,19 +450,19 @@ function may_bragdon_get_islandora_objects($objects) {
                     $description = $dc['dc:description']['value'];
                 }
             }
-            
+
             $link_options = array('html' => TRUE, 'query' => $query, 'attributes' => array('title' => $manuscript->label));
-            
+
             $mods_data = get_data($manuscript);
             $page =$page_number; // just in case there is no page number
             if(array_key_exists('Page', $mods_data)){
                 if(array_key_exists(0, $mods_data['Page'])){
                     $page = trim(str_replace("p.", "", $mods_data['Page'][0]));
                 }
-                
+
             }
-            
-            
+
+
 
             //append the data
             $fullObjectData[] = array(
@@ -476,7 +476,7 @@ function may_bragdon_get_islandora_objects($objects) {
         }
     }
 
-   
+
     return $fullObjectData;
 }
 
@@ -496,7 +496,7 @@ function getOccludedImage($objId) {
                         "$islandora_module_path/images/folder.png"),
                 '#attributes' => array(),
             );
-         
+
         }
     }
 
@@ -543,7 +543,7 @@ function may_bragdon_simple_search_form_submit($form, &$form_state) {
     module_load_include('inc', 'islandora_solr', 'includes/utilities');
     $search_string = islandora_solr_replace_slashes($form_state['values']['islandora_simple_search_query']);
 
-    $query = array('type' => 'dismax', 'display' => 'may_bragdon');
+    $query = array('type' => 'edismax', 'display' => 'may_bragdon');
 
     $form_state['redirect'] = array(
         ISLANDORA_SOLR_SEARCH_PATH . "/$search_string",
