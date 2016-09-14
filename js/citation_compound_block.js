@@ -21,7 +21,7 @@
                         var match = value.match(/\w*%3A\d*[^\/]/g);
                         $(element).attr("href", value.replace(match, encodeURIComponent(pid)));                        
                     }
-                });
+                });             
                 var contactTopPosition = $("#paged-tei-seadragon-viewer-tei").position().top;
                 $("#paged-tei-seadragon-viewer-tei").scrollTop(0);
                 // Drop out here if we are the most current request.
@@ -48,6 +48,35 @@
 
     };
 
+    function getUrlParams() {
+        //old_page_update(pid, page_number);
+        // get the url parameters
+        (function () {
+            var match,
+                    pl = /\+/g, // Regex for replacing addition symbol with a space
+                    search = /([^&=]+)=?([^&]*)/g,
+                    decode = function (s) {
+                        return decodeURIComponent(s.replace(pl, " "));
+                    },
+                    query = window.location.search.substring(1);
+
+            urlParams = {};
+            while (match = search.exec(query))
+                urlParams[decode(match[1])] = decode(match[2]);
+        })();
+
+        var viewOccluded = false;
+        if (urlParams && urlParams['occluded'] && urlParams['occluded'] === "true") {
+            viewOccluded = true;
+        }
+
+        var readerView = false;
+        if (urlParams && urlParams['readerView'] && urlParams['readerView'] === "true") {
+            readerView = true;
+        }
+        return {readerView: readerView, viewOccluded: viewOccluded};
+    }
+    
     function setCiteInfo(response) {
         var title = "";
         var nameArray = "";
@@ -90,13 +119,6 @@
 
     //call the page load function after the first page load
     $(function () {
-
-        /*
-         var $occluded = $("#roch-tei-viewer-occluded");
-         $occluded.click(function() {
-         $occluded.after('<div class="ajax-progress ajax-progress-throbber"><div class="loader">&nbsp;</div></div>');
-         });*/
-
         //HACK - this will replace anything with a colon followed by a number 
         // and replace it with the current pid
         $('.tabs--primary.nav.nav-tabs li a').each(function (index, element) {
@@ -109,6 +131,41 @@
                 }
             }
         });
+        /*
+         var $occluded = $("#roch-tei-viewer-occluded");
+         $occluded.click(function() {
+         $occluded.after('<div class="ajax-progress ajax-progress-throbber"><div class="loader">&nbsp;</div></div>');
+         });*/
+
+        // Check if the new page has an occluded object and update the occluded
+        // link display.
+        var urlData = getUrlParams();
+        var currentPid = $("#islandora_paged_tei_seadragon_pager").val();
+        // only get occluded url if needed
+        if (urlData.viewOccluded) {
+            $.ajax(Drupal.settings.basePath + "islandora/object/" + currentPid + "/tei_viewer/find_occluded", {
+                success: function (data, status, jqXHR) {
+                    //change out manage pid if viewing occcluded
+                    if (data.found && urlData.viewOccluded) {
+                        //HACK - this will replace anything with a colon followed by a number 
+                        // and replace it with the current pid
+                        $('.tabs--primary.nav.nav-tabs li a').each(function (index, element) {
+                            if ($(element).text() === "Manage") {
+                                var value = $(element).attr("href");
+                                var match = value.match(/\w*%3A\d*[^\/]/g);
+                                var currentPid = data.pid;
+                                if (currentPid) {
+                                    $(element).attr("href", value.replace(match, encodeURIComponent(currentPid)));
+                                }
+                            }
+                        });
+                    }
+                },
+                error: function (error) {
+                    console.log("error", error);
+                }
+            });
+        }
 
         if ($(".openseadragon-container").length) {
             $(".openseadragon-container").css("position", "absolute");
