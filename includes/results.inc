@@ -40,7 +40,7 @@ class MayIslandoraSolrResults {
    *   results.
    */
   public function displayResults($islandora_solr_query) {
-    $solr_path = drupal_get_path('module', 'islandora_solr_search');
+    $solr_path = drupal_get_path('module', 'islandora_solr');
     $this->islandoraSolrQueryProcessor = $islandora_solr_query;
     
     // Set variables to collect returned data.
